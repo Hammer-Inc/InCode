@@ -1,77 +1,94 @@
 import React, {Component} from "react/cjs/react.production.min";
 
-import {NavLink} from "react-router-dom";
-import {AppBar, Dialog, Drawer, IconButton, MenuItem} from "material-ui";
-import {NavigationCheck, NavigationClose, NavigationMenu} from "material-ui/svg-icons/index";
-import Backdrop from "./UIComponents/Backdrop"
-import {red900} from "material-ui/styles/colors";
+import {AppBar, Drawer, IconButton, Paper} from "material-ui";
+import {NavigationClose, NavigationMenu} from "material-ui/svg-icons/index";
+import Backdrop from "./Components/Backdrop"
+import CodewordInput from "./Components/CodewordInput";
+import PropTypes from "prop-types";
+import CodewordOutput from "./Components/CodewordOutput";
 
 export default class Navigation extends Component {
+    static propTypes = {
+        doUpdate: PropTypes.func,
+        information: PropTypes.object
+
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             open: false,
-            confirmLogout: false
+            input_state: {
+                data: "",
+                type: "binary"
+            },
         };
     }
 
     handleToggle = () => this.setState({open: !this.state.open});
 
+    handleInputChange = (newState) => {
+        this.setState({input_state: newState});
+    };
+
+    // Cascade update at correct levels
+    doUpdate = (newEnv) => {
+        this.handleInputChange(newEnv["input"]);
+        this.setState({
+            open: false,
+        });
+        this.props.doUpdate(newEnv);
+    };
+
     render() {
         return (
             <nav>
                 <AppBar
-                    title={this.state.open ? "" : "Ticket Collector"}
+                    title={this.state.open ? "" : "Hamming Simulator"}
                     iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationMenu/></IconButton>}
                 />
                 <Drawer open={this.state.open}>
                     <AppBar
-                        title="Navigation"
+                        title="Options"
                         titleStyle={{cursor: 'pointer'}}
                         onTitleTouchTap={this.handleToggle}
                         iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationClose/></IconButton>}
                     />
-                    <MenuItem onClick={this.handleToggle}><NavLink to="/">Home</NavLink></MenuItem>
-                    {this.props.authed !== true && (
-                        <MenuItem onClick={this.handleToggle}><NavLink to="/login">Login</NavLink></MenuItem>)}
-                    {this.props.authed && (
-                        <MenuItem onClick={this.handleToggle}><NavLink to="/assigned">My Tickets</NavLink></MenuItem>)}
-                    {this.props.authed && (<MenuItem onClick={this.confirmLogout}>Logout</MenuItem>)}
+                    <div
+                        style={{margin: "10px"}}
+                    >
+                        <Paper
+                            zDepth={1}
+                            rounded={true}
+                        >
+                            <CodewordInput
+                                doUpdate={this.doUpdate}
+                                inputStateChange={this.handleInputChange}
+                                input_state={this.state.input_state}
+                                information={this.props.information}
+                            />
+                        </Paper>
+                        <br/>
+                        <Paper
+                            zDepth={2}
+                            rounded={true}
+                        >
+                            <CodewordOutput
+                                doUpdate={this.doUpdate}
+                                inputStateChange={this.handleInputChange}
+                                input_state={this.state.input_state}
+                                information={this.props.information}
+                            />
+                        </Paper>
+                        {/*<CodewordOutput*/}
+                        {/*doUpdate={this.doUpdate}*/}
+                        {/*information={this.props.information}*/}
+                        {/*/>*/}
+                    </div>
                 </Drawer>
+
                 {this.state.open && (<Backdrop onClick={this.handleToggle}/>)}
-                <Dialog
-                    title={"Confirm Logout."}
-                    titleStyle={{color: red900}}
-                    modal={false}
-                    actions={[(<IconButton className="btn btn-success" onClick={this.cancelLogout}><NavigationClose/>
-                        Cancel</IconButton>), (
-                        <IconButton className="btn btn-danger" onClick={this.performLogout}><NavigationCheck/>
-                            Logout</IconButton>)]}
-                    open={this.state.confirmLogout}
-                    onRequestClose={this.cancelLogout}
-                >
-                    Are you sure you want to log out?
-                </Dialog>
             </nav>
         );
     }
-
-    performLogout = () => {
-        this.setState({
-            confirmLogout: false
-        });
-        this.props.doLogoutCallback();
-    };
-
-    confirmLogout = () => {
-        this.setState({
-            confirmLogout: true
-        });
-    };
-
-    cancelLogout = () => {
-        this.setState({
-            confirmLogout: false
-        });
-    };
 }

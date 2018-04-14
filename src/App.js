@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import './App.css';
 import {MuiThemeProvider} from "material-ui";
-import Auth from "./Logic/Auth";
+import Page from "./Page.js";
 
 class App extends Component {
     render() {
         return (
             <div className="App">
                 <MuiThemeProvider>
-                    <Auth/>
+                    <Page/>
                 </MuiThemeProvider>
             </div>
         );
