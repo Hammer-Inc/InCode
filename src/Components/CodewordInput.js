@@ -30,7 +30,7 @@ export default class CodewordInput extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.input_state["type"] !== this.props.input_state["type"]) {
+        if (nextProps.input_state["type"] !== this.props.input_state["type"] && nextProps.input_state["type"] in this.state) {
             this.setState({
                 mode: nextProps.input_state["type"]
             })
@@ -85,6 +85,12 @@ export default class CodewordInput extends Component {
         }
     };
 
+
+    onKeyUp = (event) => {
+        if (event.key === 'Enter') {
+            this.consumeEndpoint()
+        }
+    };
     consumeEndpoint = () => {
 
         this.setState({loading: true});
@@ -123,6 +129,7 @@ export default class CodewordInput extends Component {
                 >
                     <Tab label="Binary Input" value="binary">
                         <TextField
+                            onKeyDown={this.onKeyUp}
                             hintText={"1011"}
                             floatingLabelText={"Codeword"}
                             value={this.state.binary.text}
@@ -137,6 +144,7 @@ export default class CodewordInput extends Component {
                     <Tab label="String Input" value="string">
                         <TextField
                             hintText={"abc"}
+                            onKeyDown={this.onKeyUp}
                             floatingLabelText={"Codeword"}
                             value={this.state.string.text}
                             onChange={this.updateText}

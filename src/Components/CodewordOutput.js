@@ -62,10 +62,15 @@ export default class CodewordOutput extends Component {
 
     };
 
+    onKeyUp = (event) => {
+        if(event.key === 'Enter'){
+            this.consumeEndpoint()
+        }
+    };
+
     consumeEndpoint = () => {
 
-        this.setState({loading: true});
-        if (!this.getValidation(this.state[this.state.mode].text))
+        if (this.getValidation(this.state[this.state.mode].text) !== '')
             return;
         let query_string = "codeword=" + this.state[this.state.mode].text;
         let request = {
@@ -75,6 +80,7 @@ export default class CodewordOutput extends Component {
                 'Content-Type': 'application/json',
             },
         };
+        this.setState({loading: true});
 
         fetch(apiLocation + endpoint + this.state.mode + "?" + query_string, request)
             .then(validateResponse)
@@ -100,6 +106,7 @@ export default class CodewordOutput extends Component {
                 >
                     <Tab label="Simulate parity errors" value="validate">
                         <TextField
+                            onKeyDown = {this.onKeyUp}
                             hintText={""}
                             floatingLabelText={"Codeword with Parity"}
                             value={this.state.validate.text}
@@ -110,9 +117,12 @@ export default class CodewordOutput extends Component {
                             multiLine={true}
                             rowsMax={5}
                         />
-
+                        <p>
+                            Here you can modify the codeword from the above message to show what happens when an error is detected.
+                        </p>
                     </Tab>
                 </Tabs>
+
                 <FlatButton label={this.state.loading ? "Loading" : "Validate"}
                             primary={true}
                             onClick={this.consumeEndpoint}
