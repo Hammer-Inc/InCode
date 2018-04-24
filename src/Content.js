@@ -2,8 +2,9 @@ import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import {GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
-import BitCard from "./Components/Card";
+import BitCard from "./Components/BitCard";
 import ParityInfo from "./Components/ParityInfo";
+import { withCookies, Cookies } from "react-cookie";
 
 const styles = {
     parent: {
@@ -20,8 +21,8 @@ const styles = {
 
 export default class Content extends Component {
     static propTypes = {
-        information: PropTypes.object
-
+        information: PropTypes.object.isRequired,
+        cookie: PropTypes.instanceOf(Cookies).isRequired
     };
 
 
@@ -29,7 +30,8 @@ export default class Content extends Component {
         super(props);
         this.state = {
             highlight: [],
-            highlight_source: null
+            highlight_source: null,
+            has_seen_tutorial: cookie.get("has_seen_tutorial") || false
         };
     }
 
@@ -50,7 +52,7 @@ export default class Content extends Component {
 
     render() {
         return (
-            <div style={{display:'block'}}>
+            <div style={{display: 'block'}}>
                 <div style={styles.parent}>
                     <GridList
                         style={styles.gridList}

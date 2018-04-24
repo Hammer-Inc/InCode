@@ -1,8 +1,20 @@
 import React, {Component} from "react/cjs/react.production.min";
-import {FlatButton, Tab, Tabs, TextField} from "material-ui";
+import {
+    Card,
+    CardActions,
+    CardHeader,
+    CardText,
+    FlatButton,
+    RadioButton,
+    RadioButtonGroup,
+    TextField
+} from "material-ui";
 import validateResponse, {matchers} from "../Logic/API";
 import {apiLocation} from "../config"
 import PropTypes from 'prop-types';
+import {ContentFontDownload, ImageLooksOne} from "material-ui/svg-icons/index";
+import {cyan500} from "material-ui/styles/colors";
+
 
 export default class CodewordInput extends Component {
     static endpoint = "/api/v1/codeword/";
@@ -15,7 +27,8 @@ export default class CodewordInput extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
+        let mode = this.props.input_state["type"];
+        let temp = {
             binary: {
                 text: '',
                 validation_state: '',
@@ -24,19 +37,37 @@ export default class CodewordInput extends Component {
                 text: '',
                 validation_state: '',
             },
+            mode: 'binary',
             loading: false,
-            mode: "binary"
+            has_clicked_mode: false,
+
+            steps: {
+                0: true,
+                1: false,
+                2: false
+            }
         };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.input_state["type"] !== this.props.input_state["type"] && nextProps.input_state["type"] in this.state) {
-            this.setState({
-                mode: nextProps.input_state["type"]
-            })
+        if (mode === "string" || mode === "binary") {
+            temp[mode].text = this.props.input_state.text;
+            temp.mode = mode;
         }
-
+        this.state = temp
     }
+
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.input_state["type"] in prevState) {
+            let temp = {
+                mode: nextProps.input_state["type"],
+            };
+            temp[nextProps.input_state.type] = {};
+            temp[nextProps.input_state.type].text = nextProps.information.data;
+            temp[nextProps.input_state.type].validation_state = '';
+            return temp;
+        }
+        return null
+    }
+
 
     getValidation = (value) => {
         if (value === "") {
@@ -59,9 +90,9 @@ export default class CodewordInput extends Component {
 
 
     modeUpdate = (event) => {
-        console.log(event);
         this.setState({
-            mode: event
+            mode: event.target.value,
+            has_clicked_mode: true,
         })
     };
 
@@ -85,12 +116,6 @@ export default class CodewordInput extends Component {
         }
     };
 
-
-    onKeyUp = (event) => {
-        if (event.key === 'Enter') {
-            this.consumeEndpoint()
-        }
-    };
     consumeEndpoint = () => {
 
         this.setState({loading: true});
@@ -120,47 +145,219 @@ export default class CodewordInput extends Component {
         })
     };
 
+    updateStep = (value, index) => {
+        console.log(value);
+        let temp = {
+            steps: this.state.steps
+        };
+        temp.steps[index] = value;
+        this.setState(temp);
+    };
+
     render() {
+        let mode = this.state.mode;
+        let text = this.state[mode].text;
+        let validation = this.state[mode].validation_state;
         return (
             <div>
-                <Tabs
-                    value={this.state.mode}
-                    onChange={this.modeUpdate}
+                <div
+                    style={{textAlign: 'left'}}
                 >
-                    <Tab label="Binary Input" value="binary">
-                        <TextField
-                            onKeyDown={this.onKeyUp}
-                            hintText={"1011"}
-                            floatingLabelText={"Codeword"}
-                            value={this.state.binary.text}
-                            onChange={this.updateText}
-                            fullWidth={true}
-                            disabled={this.state.loading}
-                            errorText={this.state.binary.validation_state}
-                        />
-                        <p>The text entered will have parity bits added and will appear below under the simulate parity
-                            errors header</p>
-                    </Tab>
-                    <Tab label="String Input" value="string">
-                        <TextField
-                            hintText={"abc"}
-                            onKeyDown={this.onKeyUp}
-                            floatingLabelText={"Codeword"}
-                            value={this.state.string.text}
-                            onChange={this.updateText}
-                            fullWidth={true}
-                            disabled={this.state.loading}
-                            errorText={this.state.string.validation_state}
-                        />
-                        <p>The string will be converted from ascii into binary and then parity bits will be added</p>
-                    </Tab>
-                </Tabs>
-                <FlatButton label={this.state.loading ? "Loading" : "Generate"}
-                            onClick={this.consumeEndpoint}
-                            disabled={this.state.loading}
-                            primary={true}/>
+                    <Tutorial
+                        open={this.state.steps[0]}
+                        openCallback={(v) => this.updateStep(v, 0)}
+                        nextCallback={() => this.updateStep(true, 1)}
+                    />
+
+                    <ModeSelector
+                        mode={mode}
+                        open={this.state.steps[1]}
+                        openCallback={(v) => this.updateStep(v, 1)}
+                        nextCallback={() => this.updateStep(true, 2)}
+                        modeCallback={this.modeUpdate}
+                    />
+                    <DataInput
+                        mode={mode}
+                        open={this.state.steps[2]}
+                        openCallback={(v) => this.updateStep(v, 2)}
+                        text={text}
+                        validation={validation}
+                        textCallback={this.updateText}
+                        generateCallback={this.consumeEndpoint}
+                    />
+
+                </div>
             </div>
         )
     }
 
+}
+
+class Tutorial extends Component {
+    static propTypes = {
+        open: PropTypes.bool,
+        openCallback: PropTypes.func,
+        nextCallback: PropTypes.func,
+    };
+
+    render() {
+        return (
+            <Card
+                expanded={this.props.open}
+                onExpandChange={this.props.openCallback}
+            >
+                <CardHeader
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                    title={"Sending Data"}
+                    subtitle={"Tutorial"}
+                >
+
+                </CardHeader>
+                <CardText
+                    expandable={true}
+                >
+                    Data when sent over a network or stored in some mediums (like ECC RAM)
+                    is
+                    prone to errors. The Hamming Code is designed to detect and correct
+                    these errors, below you can simulate sending a message and see what bits
+                    the
+                    hamming code would add to your message to ensure no errors occur in
+                    transmission
+                </CardText>
+                <CardActions
+                    expandable={true}
+                >
+                    <FlatButton
+                        label={"Next"}
+                        onClick={() => {
+                            this.props.nextCallback();
+                            this.props.openCallback(false)
+                        }}
+                        primary
+                    />
+                </CardActions>
+            </Card>
+        )
+    }
+}
+
+class ModeSelector extends Component {
+    static propTypes = {
+        open: PropTypes.bool,
+        openCallback: PropTypes.func,
+        mode: PropTypes.string,
+        modeCallback: PropTypes.func,
+    };
+
+    render() {
+        let {open, openCallback, mode, modeCallback} = this.props;
+        return (
+            <Card
+                expanded={open}
+                onExpandChange={openCallback}
+            >
+                <CardHeader
+                    title={"Step 1"}
+                    subtitle={"Select an input mode"}
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                >
+                </CardHeader>
+                <CardText
+                    expandable={true}
+                >
+                    Select your preferred input mode here, default is "Binary", if you select a mode other than
+                    binary, your input will be converted to it's binary representation before parity bits are
+                    added.
+                </CardText>
+                <CardText expandable={true}>
+                    <RadioButtonGroup name="Input Mode" valueSelected={mode}
+                                      onChange={modeCallback}>
+                        <RadioButton
+                            value="binary"
+                            label="Binary"
+                            checkedIcon={<ImageLooksOne style={{color: cyan500}}/>}
+                            uncheckedIcon={<ImageLooksOne/>}
+                        />
+                        <RadioButton
+                            value="string"
+                            label="String"
+                            checkedIcon={<ContentFontDownload style={{color: cyan500}}/>}
+                            uncheckedIcon={<ContentFontDownload/>}
+                        />
+                    </RadioButtonGroup>
+                </CardText>
+                <CardActions
+                    expandable={true}
+                >
+                    <FlatButton
+                        label={"Next"}
+                        onClick={() => {
+                            this.props.nextCallback();
+                            this.props.openCallback(false)
+                        }}
+                        primary
+                    />
+                </CardActions>
+            </Card>
+        )
+    }
+}
+
+class DataInput extends Component {
+    static propTypes = {
+        mode: PropTypes.string,
+        open: PropTypes.bool,
+        openCallback: PropTypes.func,
+        text: PropTypes.string,
+        validation: PropTypes.string,
+        textCallback: PropTypes.func,
+        generateCallback: PropTypes.func,
+    };
+    onKeyUp = (event) => {
+        if (event.key === 'Enter') {
+            this.props.generateCallback()
+        }
+    };
+
+    render() {
+        let mode = this.props.mode;
+        let is_binary = mode === "binary";
+        let is_string = mode === "string";
+        return (
+            <Card
+                expanded={this.props.open}
+                onExpandChange={this.props.openCallback}
+            >
+                <CardHeader
+                    title={"Step 2"}
+                    subtitle={"Enter text to encode"}
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                />
+                <CardText
+                    expandable={true}
+                >
+                    <TextField
+                        name={"codeword input"}
+                        style={{marginTop: "0px"}}
+                        onKeyDown={this.onKeyUp}
+                        hintText={is_binary ? "111" : is_string ? "abc" : "error_mode"}
+                        value={this.props.text}
+                        onChange={this.props.textCallback}
+                        fullWidth={true}
+                        disabled={false}
+                        errorText={this.props.validation}
+                    />
+                </CardText>
+                <CardActions expandable={true}>
+                    <FlatButton label={"Generate"}
+                                onClick={this.props.generateCallback}
+                                disabled={false}
+                                primary={true}/>
+                </CardActions>
+            </Card>
+        )
+    }
 }
