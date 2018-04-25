@@ -19,10 +19,12 @@ import {cyan500} from "material-ui/styles/colors";
 export default class CodewordInput extends Component {
     static endpoint = "/api/v1/codeword/";
     static propTypes = {
-        doUpdate: PropTypes.func,
-        inputStateChange: PropTypes.func,
-        input_state: PropTypes.object,
-        information: PropTypes.object,
+        doUpdate: PropTypes.func.isRequired,
+        inputStateChange: PropTypes.func.isRequired,
+        input_state: PropTypes.object.isRequired,
+        information: PropTypes.object.isRequired,
+        showTutorial: PropTypes.bool,
+        resetTutorial: PropTypes.func,
     };
 
     constructor(props) {
@@ -42,7 +44,7 @@ export default class CodewordInput extends Component {
             has_clicked_mode: false,
 
             steps: {
-                0: true,
+                0: this.props.showTutorial,
                 1: false,
                 2: false
             }
@@ -166,7 +168,7 @@ export default class CodewordInput extends Component {
                     <Tutorial
                         open={this.state.steps[0]}
                         openCallback={(v) => this.updateStep(v, 0)}
-                        nextCallback={() => this.updateStep(true, 1)}
+                        nextCallback={() => {this.updateStep(true, 1); this.props.resetTutorial()}}
                     />
 
                     <ModeSelector
