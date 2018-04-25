@@ -23,8 +23,6 @@ export default class CodewordInput extends Component {
         inputStateChange: PropTypes.func.isRequired,
         inputState: PropTypes.object.isRequired,
         information: PropTypes.object.isRequired,
-        seenTutorial: PropTypes.bool,
-        onInteractWithTutorial: PropTypes.func,
     };
 
     constructor(props) {
@@ -41,10 +39,9 @@ export default class CodewordInput extends Component {
             },
             mode: 'binary',
             loading: false,
-            has_clicked_mode: false,
 
             steps: {
-                0: !this.props.seenTutorial,
+                0: localStorage.getItem("seenTutorial") !== '1',
                 1: false,
                 2: false
             }
@@ -70,7 +67,10 @@ export default class CodewordInput extends Component {
         return null
     }
 
-
+    onCompleteTutorial = () => {
+        localStorage.setItem("seenTutorial", '1')
+    };
+    
     getValidation = (value) => {
         if (value === "") {
             return ''
@@ -94,7 +94,6 @@ export default class CodewordInput extends Component {
     modeUpdate = (event) => {
         this.setState({
             mode: event.target.value,
-            has_clicked_mode: true,
         })
     };
 
@@ -168,7 +167,10 @@ export default class CodewordInput extends Component {
                     <Tutorial
                         open={this.state.steps[0]}
                         openCallback={(v) => this.updateStep(v, 0)}
-                        nextCallback={() => {this.updateStep(true, 1); this.props.onInteractWithTutorial()}}
+                        nextCallback={() => {
+                            this.updateStep(true, 1);
+                            this.onCompleteTutorial();
+                        }}
                     />
 
                     <ModeSelector
