@@ -1,15 +1,11 @@
 import React, {Component} from "react/cjs/react.production.min";
 import Navigation from "./Navigation";
 import Content from "./Content";
-import {CookieProvider}
 
 /** Auth Component
  Contains all functions/states required to update the authentication state.
  */
 export default class Page extends Component {
-
-    static propTypes = {};
-
     constructor(props) {
         super(props);
         this.state = {
@@ -31,7 +27,6 @@ export default class Page extends Component {
 
     render() {
         return (<div>
-            <CookiesProvider>
                 <Navigation
                     doUpdate={this.updateEnv}
                     information={this.state.information_state}
@@ -42,17 +37,16 @@ export default class Page extends Component {
                     />
                 </div>
                 <label className="text-muted">This application was created by Avraham Hammer (S3599575)</label>
-            </CookiesProvider>
-        </div>
-    );
+            </div>
+        );
     }
 
     updateEnv = (newEnv) => {
         let information = newEnv["information"];
 
         this.setState({
-        information_state: information
-    })
+            information_state: information
+        })
     }
-    }
+}
 

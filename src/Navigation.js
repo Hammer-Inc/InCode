@@ -91,7 +91,7 @@ class Navigation extends Component {
                                     <CodewordInput
                                         doUpdate={this.doUpdate}
                                         inputStateChange={this.handleInputChange}
-                                        input_state={this.state.inputState}
+                                        inputState={this.state.inputState}
                                         information={this.props.information}
                                         seenTutorial={this.state.seenTutorial}
                                         onInteractWithTutorial={this.onCompleteTutorial}
@@ -106,7 +106,7 @@ class Navigation extends Component {
                                     <CodewordOutput
                                         doUpdate={this.doUpdate}
                                         inputStateChange={this.handleInputChange}
-                                        input_state={this.state.inputState}
+                                        inputState={this.state.inputState}
                                         information={this.props.information}
                                     />
                                 </Paper>

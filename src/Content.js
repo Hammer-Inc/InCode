@@ -4,7 +4,7 @@ import {GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import BitCard from "./Components/BitCard";
 import ParityInfo from "./Components/ParityInfo";
-import { withCookies, Cookies } from "react-cookie";
+import {Cookies, withCookies} from "react-cookie";
 
 const styles = {
     parent: {
@@ -22,7 +22,6 @@ const styles = {
 export default class Content extends Component {
     static propTypes = {
         information: PropTypes.object.isRequired,
-        cookie: PropTypes.instanceOf(Cookies).isRequired
     };
 
 
@@ -31,10 +30,8 @@ export default class Content extends Component {
         this.state = {
             highlight: [],
             highlight_source: null,
-            has_seen_tutorial: cookie.get("has_seen_tutorial") || false
         };
     }
-
 
     setHighlight = (bit) => {
         if (bit === null) {

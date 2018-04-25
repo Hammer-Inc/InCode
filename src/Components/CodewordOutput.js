@@ -8,7 +8,7 @@ export default class CodewordOutput extends Component {
     static propTypes = {
         doUpdate: PropTypes.func,
         inputStateChange: PropTypes.func,
-        input_state: PropTypes.object,
+        inputState: PropTypes.object,
         information: PropTypes.object,
     };
 

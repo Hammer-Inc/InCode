@@ -21,15 +21,15 @@ export default class CodewordInput extends Component {
     static propTypes = {
         doUpdate: PropTypes.func.isRequired,
         inputStateChange: PropTypes.func.isRequired,
-        input_state: PropTypes.object.isRequired,
+        inputState: PropTypes.object.isRequired,
         information: PropTypes.object.isRequired,
-        showTutorial: PropTypes.bool,
-        resetTutorial: PropTypes.func,
+        seenTutorial: PropTypes.bool,
+        onInteractWithTutorial: PropTypes.func,
     };
 
     constructor(props) {
         super(props);
-        let mode = this.props.input_state["type"];
+        let mode = this.props.inputState["type"];
         let temp = {
             binary: {
                 text: '',
@@ -44,13 +44,13 @@ export default class CodewordInput extends Component {
             has_clicked_mode: false,
 
             steps: {
-                0: this.props.showTutorial,
+                0: !this.props.seenTutorial,
                 1: false,
                 2: false
             }
         };
         if (mode === "string" || mode === "binary") {
-            temp[mode].text = this.props.input_state.text;
+            temp[mode].text = this.props.inputState.text;
             temp.mode = mode;
         }
         this.state = temp
@@ -58,13 +58,13 @@ export default class CodewordInput extends Component {
 
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.input_state["type"] in prevState) {
+        if (nextProps.inputState["type"] in prevState) {
             let temp = {
-                mode: nextProps.input_state["type"],
+                mode: nextProps.inputState["type"],
             };
-            temp[nextProps.input_state.type] = {};
-            temp[nextProps.input_state.type].text = nextProps.information.data;
-            temp[nextProps.input_state.type].validation_state = '';
+            temp[nextProps.inputState.type] = {};
+            temp[nextProps.inputState.type].text = nextProps.information.data;
+            temp[nextProps.inputState.type].validation_state = '';
             return temp;
         }
         return null
@@ -168,7 +168,7 @@ export default class CodewordInput extends Component {
                     <Tutorial
                         open={this.state.steps[0]}
                         openCallback={(v) => this.updateStep(v, 0)}
-                        nextCallback={() => {this.updateStep(true, 1); this.props.resetTutorial()}}
+                        nextCallback={() => {this.updateStep(true, 1); this.props.onInteractWithTutorial()}}
                     />
 
                     <ModeSelector
