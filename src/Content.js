@@ -1,6 +1,6 @@
 import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
-import {GridList} from "material-ui";
+import {Card, CardHeader, CardText, GridList, Paper} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import BitCard from "./Components/BitCard";
 import ParityInfo from "./Components/ParityInfo";
@@ -49,10 +49,40 @@ export default class Content extends Component {
     render() {
         return (
             <div style={{display: 'block'}}>
+                <div style={{textAlign: 'left'}}>
+                    <Card
+                        expandable={true}
+                        initiallyExpanded={true}
+                    >
+                        <CardHeader
+                            title={"Viewing results"}
+                            subtitle={"Tutorial"}
+                            actAsExpander={true}
+                            showExpandableButton={true}
+                        />
+                        <CardText
+                            expandable={true}
+                        >
+                            <p>
+                                Once you enter some data in the 'settings' sidebar menu and click validate you will see
+                                a series of cards below. Each card represents a binary value you entered or a parity bit
+                                calculated for the information entered.
+                            </p>
+                            <p style={{display:this.props.information.message.length === 0 ? 'none':'inherit' }}>
+                                <strong>Hint:</strong> Try clicking on a card to see more information about it!
+                            </p>
+                        </CardText>
+                    </Card>
+                </div>
                 <div style={styles.parent}>
                     <GridList
                         style={styles.gridList}
                         cols={'2.2'}>
+                        {this.props.information.message.length === 0 && (
+                            <div>
+                                Insert Sample card here
+                            </div>
+                        )}
                         {this.props.information.parity.concat(
                             this.props.information.message).sort(
                             sortbyposition).reverse().map((bit) => (
