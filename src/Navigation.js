@@ -25,13 +25,10 @@ class Navigation extends Component {
                 type: "binary"
             },
             mode: "send",
-            seenTutorial: localStorage.getItem("seenTutorial") === '1' || false
         };
     }
 
-    onCompleteTutorial = () => {
-        localStorage.setItem("seenTutorial", '1')
-    };
+
 
     handleModeUpdate = (newMode) => {
         this.setState({
@@ -66,7 +63,7 @@ class Navigation extends Component {
                     iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationMenu/></IconButton>}
                 />
                 <Drawer
-                    open={this.state.open || !this.state.seenTutorial}
+                    open={this.state.open}
                     width={400}
                 >
                     <AppBar
@@ -93,8 +90,6 @@ class Navigation extends Component {
                                         inputStateChange={this.handleInputChange}
                                         inputState={this.state.inputState}
                                         information={this.props.information}
-                                        seenTutorial={this.state.seenTutorial}
-                                        onInteractWithTutorial={this.onCompleteTutorial}
                                     />
                                 </Paper>
                             ) : this.state.mode === "receive" ? (

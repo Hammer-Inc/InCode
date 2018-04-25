@@ -70,7 +70,7 @@ export default class CodewordInput extends Component {
     onCompleteTutorial = () => {
         localStorage.setItem("seenTutorial", '1')
     };
-    
+
     getValidation = (value) => {
         if (value === "") {
             return ''
