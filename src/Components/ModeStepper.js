@@ -6,7 +6,7 @@ import {
     HardwareKeyboardArrowRight
 } from "material-ui/svg-icons/index";
 import React, {Component} from "react";
-import {FontIcon, Step, StepButton, Stepper} from "material-ui";
+import {FontIcon, IconButton, Step, StepButton, Stepper} from "material-ui";
 import {cyan500} from "material-ui/styles/colors";
 
 export default class BitCard extends Component {
@@ -25,46 +25,37 @@ export default class BitCard extends Component {
         return (<div>
             <Stepper
                 linear={false}
-                connector={<ActionSettingsEthernet/>}
+                connector={<div style={{width: '200px'}}>
+                    <HardwareKeyboardArrowRight/>
+                    <ActionSettingsEthernet/>
+                    <HardwareKeyboardArrowRight/>
+                </div>}
             >
-                <Step completed={isSending}>
-                    <StepButton
+                <Step>
+                    <IconButton
+                        tooltip={"Send Data"}
+                        tooltipPosition={'bottom-center'}
                         onClick={() => {
                             this.props.on_mode_change("send")
                         }}
-                        icon={
-                            <FontIcon>
-                                <HardwareComputer
-                                    style={isSending ? active_icon : {}}
-                                />
-                                <HardwareKeyboardArrowRight
-                                    style={isSending ? active_icon : {}}
-                                />
-                            </FontIcon>
-                        }
+                        iconStyle={isSending ? active_icon : {}}
                     >
-                    </StepButton>
+                        <HardwareComputer
+                        />
+                    </IconButton>
                 </Step>
                 <Step completed={isReceiving}>
-                    <StepButton
+                    <IconButton
+                        tooltip={"Receive Data"}
+                        tooltipPosition={'bottom-center'}
                         onClick={() => {
                             this.props.on_mode_change("receive")
                         }}
-
-                        icon={
-                            <FontIcon>
-                                <HardwareKeyboardArrowRight
-                                    style={isReceiving ? active_icon : {}}
-                                />
-                                <HardwareDesktopWindows
-                                    style={isReceiving ? active_icon : {}}
-                                />
-
-                            </FontIcon>
-                        }
+                        iconStyle={isReceiving ? active_icon : {}}
                     >
-
-                    </StepButton>
+                        <HardwareDesktopWindows
+                        />
+                    </IconButton>
                 </Step>
             </Stepper>
         </div>)

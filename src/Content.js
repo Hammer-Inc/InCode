@@ -78,11 +78,11 @@ export default class Content extends Component {
                     <GridList
                         style={styles.gridList}
                         cols={'2.2'}>
-                        {this.props.information.message.length === 0 && (
+                        {this.props.information.message.length === 0 ? (
                             <div>
                                 Insert Sample card here
                             </div>
-                        )}
+                        ):null}
                         {this.props.information.parity.concat(
                             this.props.information.message).sort(
                             sortbyposition).reverse().map((bit) => (
