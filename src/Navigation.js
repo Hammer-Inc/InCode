@@ -8,11 +8,10 @@ import PropTypes from "prop-types";
 import CodewordOutput from "./Components/CodewordOutput";
 import ModeStepper from "./Components/ModeStepper";
 
-export default class Navigation extends Component {
+class Navigation extends Component {
     static propTypes = {
-        doUpdate: PropTypes.func,
-        information: PropTypes.object
-
+        doUpdate: PropTypes.func.isRequired,
+        information: PropTypes.object,
     };
 
     static validModes = {"send": ["binary", "string"], "receive": ["validate"]};
@@ -21,13 +20,18 @@ export default class Navigation extends Component {
         super(props);
         this.state = {
             open: true,
-            input_state: {
+            inputState: {
                 data: "",
                 type: "binary"
             },
             mode: "send",
+            seenTutorial: localStorage.getItem("seenTutorial") === '1' || false
         };
     }
+
+    onCompleteTutorial = () => {
+        localStorage.setItem("seenTutorial", '1')
+    };
 
     handleModeUpdate = (newMode) => {
         this.setState({
@@ -38,9 +42,9 @@ export default class Navigation extends Component {
     handleToggle = () => this.setState({open: !this.state.open});
 
     handleInputChange = (newState) => {
-        let newMode = this.state.mode === "send" ? "receive": "send";
+        let newMode = this.state.mode === "send" ? "receive" : "send";
         this.setState({
-            input_state: newState,
+            inputState: newState,
             mode: newMode
         });
     };
@@ -62,7 +66,7 @@ export default class Navigation extends Component {
                     iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationMenu/></IconButton>}
                 />
                 <Drawer
-                    open={this.state.open}
+                    open={this.state.open || !this.state.seenTutorial}
                     width={400}
                 >
                     <AppBar
@@ -87,8 +91,10 @@ export default class Navigation extends Component {
                                     <CodewordInput
                                         doUpdate={this.doUpdate}
                                         inputStateChange={this.handleInputChange}
-                                        input_state={this.state.input_state}
+                                        input_state={this.state.inputState}
                                         information={this.props.information}
+                                        seenTutorial={this.state.seenTutorial}
+                                        onInteractWithTutorial={this.onCompleteTutorial}
                                     />
                                 </Paper>
                             ) : this.state.mode === "receive" ? (
@@ -100,7 +106,7 @@ export default class Navigation extends Component {
                                     <CodewordOutput
                                         doUpdate={this.doUpdate}
                                         inputStateChange={this.handleInputChange}
-                                        input_state={this.state.input_state}
+                                        input_state={this.state.inputState}
                                         information={this.props.information}
                                     />
                                 </Paper>
@@ -114,3 +120,5 @@ export default class Navigation extends Component {
         );
     }
 }
+
+export default Navigation
