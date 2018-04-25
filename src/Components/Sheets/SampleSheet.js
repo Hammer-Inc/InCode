@@ -1,11 +1,11 @@
-import React, {Component} from "react/cjs/react.production.min";
-import PropTypes from "prop-types";
+import React from "react/cjs/react.production.min";
 import {GridTile, Paper} from "material-ui";
 import Tooltip from "react-bootstrap/es/Tooltip";
 import {OverlayTrigger} from "react-bootstrap";
 import Sheet, {styles} from "./Sheet";
 
 export default class SampleSheet extends Sheet {
+
     render() {
         return (
             <GridTile
@@ -35,7 +35,7 @@ export default class SampleSheet extends Sheet {
                             {this.props.value}
                         </div>
                     </OverlayTrigger>
-                    <div style={}>
+                    <div style={styles.headerBar}>
                         <h5 style={styles.header}>
                             {this.props.header}
                         </h5>

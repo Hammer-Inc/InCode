@@ -1,8 +1,5 @@
-import React, {Component} from "react/cjs/react.production.min";
+import {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
-import {GridTile, Paper} from "material-ui";
-import Tooltip from "react-bootstrap/es/Tooltip";
-import {OverlayTrigger} from "react-bootstrap";
 
 export default class Sheet extends Component {
     static colours = {
@@ -22,17 +19,17 @@ export default class Sheet extends Component {
     };
 
     static propTypes = {
-        identifier: PropTypes.string().isRequired,
-        value: PropTypes.string().isRequired,
-        index: PropTypes.number().isRequired,
-        header: PropTypes.string().isRequired,
+        identifier: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired,
+        index: PropTypes.number.isRequired,
+        header: PropTypes.string.isRequired,
         title: PropTypes.string,
 
-        isSelected: PropTypes.bool().isRequired,
-        onClick: PropTypes.func().isRequired,
+        isSelected: PropTypes.bool.isRequired,
+        onClick: PropTypes.func.isRequired,
         highlight: PropTypes.shape({
-            type: PropTypes.string().isRequired,
-            color: PropTypes.string().isRequired,
+            type: PropTypes.string.isRequired,
+            color: PropTypes.string.isRequired,
         }),
     };
 
@@ -73,7 +70,7 @@ const styles = {
     },
     overlay: {
         text: {
-            color: Sheet.colours.colours.sheet.fadeText,
+            color: Sheet.colours.sheet.fadeText,
             marginRight: '16px !important'
         },
         bg: Sheet.colours.sheet.fade

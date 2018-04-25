@@ -6,7 +6,7 @@ import {
     HardwareKeyboardArrowRight
 } from "material-ui/svg-icons/index";
 import React, {Component} from "react";
-import {FontIcon, IconButton, Step, StepButton, Stepper} from "material-ui";
+import {IconButton, Step, StepButton, Stepper} from "material-ui";
 import {cyan500} from "material-ui/styles/colors";
 
 export default class BitCard extends Component {
@@ -44,18 +44,20 @@ export default class BitCard extends Component {
                         />
                     </IconButton>
                 </Step>
-                <Step completed={isReceiving}>
-                    <IconButton
-                        tooltip={"Receive Data"}
-                        tooltipPosition={'bottom-center'}
-                        onClick={() => {
-                            this.props.on_mode_change("receive")
-                        }}
-                        iconStyle={isReceiving ? active_icon : {}}
-                    >
-                        <HardwareDesktopWindows
-                        />
-                    </IconButton>
+                <Step>
+                    <StepButton>
+                        <IconButton
+                            tooltip={"Receive Data"}
+                            tooltipPosition={'bottom-center'}
+                            onClick={() => {
+                                this.props.on_mode_change("receive")
+                            }}
+                            iconStyle={isReceiving ? active_icon : {}}
+                        >
+                            <HardwareDesktopWindows
+                            />
+                        </IconButton>
+                    </StepButton>
                 </Step>
             </Stepper>
         </div>)

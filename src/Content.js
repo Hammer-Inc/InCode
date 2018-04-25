@@ -1,20 +1,20 @@
 import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
-import {Card, CardHeader, CardText, GridList, Paper} from "material-ui";
+import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import ParitySheet from "./Components/Sheets/ParitySheet";
 import ParityInfo from "./Components/ParityInfo";
 
 const styles = {
     parent: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
+        // display: 'flex',
+        // flexWrap: 'wrap',
+        // justifyContent: 'space-around',
     },
     gridList: {
         display: 'flex',
         flexWrap: 'nowrap',
-        overflowX: 'scroll',
+        overflowX: 'auto',
     },
 };
 
@@ -47,6 +47,24 @@ export default class Content extends Component {
     };
 
     render() {
+        let elements = this.props.information.parity.concat(this.props.information.message).sort(sortbyposition).reverse();
+        const elementsAsGrid = (e) => e.map((bit) => {
+                return (
+                    <ParitySheet
+                        bit={bit}
+                        isSelected={this.state.highlight.indexOf(bit.index) > -1 && !bit.hasOwnProperty('components')}
+                        isShowingParity={this.state.highlight_source === bit.index && bit.hasOwnProperty('components')}
+                        onShowParity={this.setHighlight}
+                        corrected={this.props.information.syndrome.errors.index === bit.position}
+                    />
+                )
+            }
+        );
+        let highlight = null;
+        if(typeof this.state.highlight_source === "number" &&
+            this.props.information.parity.length > this.state.highlight_source - 1) {
+            highlight = this.props.information.parity[this.state.highlight_source - 1];
+        }
         return (
             <div style={{display: 'block'}}>
                 <div style={{textAlign: 'left'}}>
@@ -60,6 +78,7 @@ export default class Content extends Component {
                             actAsExpander={true}
                             showExpandableButton={true}
                         />
+
                         <CardText
                             expandable={true}
                         >
@@ -68,43 +87,39 @@ export default class Content extends Component {
                                 a series of cards below. Each card represents a binary value you entered or a parity bit
                                 calculated for the information entered.
                             </p>
-                            <p style={{display:this.props.information.message.length === 0 ? 'none':'inherit' }}>
-                                <strong>Hint:</strong> Try clicking on a card to see more information about it!
+                            <p style={{display: this.props.information.message.length === 0 ? 'none' : 'inherit'}}>
                             </p>
                         </CardText>
                     </Card>
-                </div>
-                <div style={styles.parent}>
-                    <GridList
-                        style={styles.gridList}
-                        cols={'2.2'}>
-                        {this.props.information.message.length === 0 ? (
-                            <div>
-                                Insert Sample card here
-                            </div>
-                        ):null}
-                        {this.props.information.parity.concat(
-                            this.props.information.message).sort(
-                            sortbyposition).reverse().map((bit) => (
-                                <ParitySheet
-                                    bit={bit}
-                                    isSelected={this.state.highlight.indexOf(bit.index) > -1 && !bit.hasOwnProperty('components')}
-                                    isShowingParity={this.state.highlight_source === bit.index && bit.hasOwnProperty('components')}
-                                    onShowParity={this.setHighlight}
-                                    corrected={this.props.information.syndrome.errors.index === bit.position}
-                                />
-                            )
-                        )}
-                    </GridList>
-                </div>
-                <div>
-                    {this.state.highlight_source !== null && this.state.highlight_source !== undefined ? (
-                        <ParityInfo
-                            source={this.props.information.parity[this.state.highlight_source - 1]}
-
+                    <Card
+                        expanded={false}
+                    >
+                        <CardHeader
+                            expandable={this.props.information.message.length === 0}
+                            title={'Result:'}
                         />
-                    ) : null}
+                        <CardText
+                            expandable={this.props.information.message.length === 0}
+                        >
+                            <GridList
+                                style={styles.gridList}
+                                cols={'2.2'}>
+                                {elementsAsGrid(elements)}
+                            </GridList>
+                        </CardText>
+                        {highlight != null ? (
+                            <CardHeader
+                                title={"P" + highlight.index}
+                                subtitle={"Data Bit at position " + highlight.position}
+                            />
+                        ) : null}
 
+                        {highlight != null ? (
+                            <ParityInfo
+                                source={highlight}
+                            />
+                        ) : null}
+                    </Card>
                 </div>
             </div>
         );
