@@ -2,7 +2,7 @@ import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import {Card, CardHeader, CardText, GridList, Paper} from "material-ui";
 import {sortbyposition} from "./Logic/API";
-import BitCard from "./Components/Cards/BitCard";
+import ParitySheet from "./Components/Sheets/ParitySheet";
 import ParityInfo from "./Components/ParityInfo";
 
 const styles = {
@@ -86,7 +86,7 @@ export default class Content extends Component {
                         {this.props.information.parity.concat(
                             this.props.information.message).sort(
                             sortbyposition).reverse().map((bit) => (
-                                <BitCard
+                                <ParitySheet
                                     bit={bit}
                                     isSelected={this.state.highlight.indexOf(bit.index) > -1 && !bit.hasOwnProperty('components')}
                                     isShowingParity={this.state.highlight_source === bit.index && bit.hasOwnProperty('components')}
