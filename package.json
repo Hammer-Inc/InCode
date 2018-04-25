@@ -7,7 +7,6 @@
     "prop-types": "^15.6.1",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.5",
-    "react-cookie": "^2.1.4",
     "react-dom": "^16.3.2",
     "react-scripts": "1.0.14"
   },

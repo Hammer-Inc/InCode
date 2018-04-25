@@ -4,7 +4,6 @@ import {GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import BitCard from "./Components/BitCard";
 import ParityInfo from "./Components/ParityInfo";
-import {Cookies, withCookies} from "react-cookie";
 
 const styles = {
     parent: {
