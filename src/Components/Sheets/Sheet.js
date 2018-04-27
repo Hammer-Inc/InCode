@@ -1,6 +1,5 @@
 import {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
-import SampleSheet from "./SampleSheet";
 import React from "react";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {GridTile, Paper} from "material-ui";
@@ -29,18 +28,16 @@ export default class Sheet extends Component {
         header: PropTypes.string.isRequired,
         title: PropTypes.string,
 
-        isSelected: PropTypes.bool.isRequired,
         onClick: PropTypes.func.isRequired,
         highlight: PropTypes.shape({
             type: PropTypes.string.isRequired,
-            color: PropTypes.string.isRequired,
+            style: PropTypes.string.isRequired,
         }),
 
         headerStyle: PropTypes.object,
         overlayStyle: PropTypes.object,
-        cardStyle:PropTypes.object,
+        cardStyle: PropTypes.object,
         indexStyle: PropTypes.object,
-        statusStyle: PropTypes.object,
     };
 
     constructor(props) {
@@ -86,7 +83,7 @@ export default class Sheet extends Component {
                 display: 'inline-block',
                 fontSize: '11px',
                 textAlign: 'center'
-            }, ...this.props.statusStyle
+            }, ...(this.props.highlight === undefined ? {} : this.props.highlight.style)
         };
         let cardStyle = {
             ... {
@@ -127,7 +124,7 @@ export default class Sheet extends Component {
         };
         const headerBar = {
             display: 'flex',
-            justifyContent:'space-between'
+            justifyContent: 'space-between'
         };
 
 
@@ -156,7 +153,7 @@ export default class Sheet extends Component {
                             onMouseEnter={this.onMouseEnter}
                             onMouseLeave={this.onMouseLeave}
                             onClick={this.props.onClick}
-                            style={{...valueStyle, ...(this.state.isHovered ? {color: SampleSheet.colours.sheet.valueHover} : {color: SampleSheet.colours.sheet.value})}}>
+                            style={{...valueStyle, ...(this.state.isHovered ? {color: Sheet.colours.sheet.valueHover} : {color: Sheet.colours.sheet.value})}}>
                             {this.props.value}
                         </div>
                     </OverlayTrigger>
@@ -166,7 +163,7 @@ export default class Sheet extends Component {
                         </h5>
                         {this.props.highlight !== undefined ?
                             (
-                                <h6 style={{...styles.statusText, ...{color: this.props.highlight.color}}}>
+                                <h6 style={statusStyle}>
                                     {this.props.highlight.type}
                                 </h6>
                             ) : null

@@ -2,7 +2,7 @@ import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import {CardText} from "material-ui";
 
-export default class BitCard extends Component {
+export default class InfoCard extends Component {
     static propTypes = {
         source: PropTypes.object,
 
@@ -10,7 +10,7 @@ export default class BitCard extends Component {
 
 
     render() {
-        let styling = {
+        const styling = {
             breakStuff: {
                 overflow: 'auto',
                 overflowWrap: 'break-word',
@@ -19,22 +19,11 @@ export default class BitCard extends Component {
                 wordBreak: 'break-word'
             },
         };
+        let isParity = this.props.source.hasOwnProperty("components");
         return (
             <CardText>
                 <p>
                     This bit can be calculated using the following formula:
-                </p>
-                <p style={styling.breakStuff}>
-                    {"P" + this.props.source.index} =
-                    {this.props.source.components.map((comp) => {
-                        return "D" + comp.index;
-                    }).join(" ⊕ ")}
-                </p>
-                <p style={styling.breakStuff}>
-                    {"P" + this.props.source.index} =
-                    {this.props.source.components.map((comp) => {
-                        return comp.value;
-                    }).join(" ⊕ ")}
                 </p>
                 <p>
                     {"\t"}={this.props.source.value}
