@@ -4,6 +4,7 @@ import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import ParityInfo from "./Components/InfoCard";
 import Sheet from "./Components/Sheets/Sheet";
+import {yellow300} from "material-ui/styles/colors";
 
 const styles = {
     parent: {
@@ -70,7 +71,8 @@ export default class Content extends Component {
         let target = this.state.infoTarget;
         let hasElements = this.props.information.message.length !== 0;
         const highlightStyle = {
-            borderColor: 'yellow'
+            color: yellow300,
+            border: '2px solid yellow'
         };
         const isHighlighted = (bit) => {
             if (this.state.highlight.includes(bit.position)) {
@@ -95,7 +97,6 @@ export default class Content extends Component {
                            }}
                            title={is_parity ? "Parity" : "Data"}
                            highlight={isHighlighted(bit) ? {type:"Component", style:highlightStyle} : undefined}
-                           cardStyle={highlightStyle}
                            headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
                            indexStyle={{color: colour_b}}
                     />
