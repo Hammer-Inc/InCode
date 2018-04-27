@@ -1,5 +1,9 @@
 import {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
+import SampleSheet from "./SampleSheet";
+import React from "react";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import {GridTile, Paper} from "material-ui";
 
 export default class Sheet extends Component {
     static colours = {
@@ -31,6 +35,12 @@ export default class Sheet extends Component {
             type: PropTypes.string.isRequired,
             color: PropTypes.string.isRequired,
         }),
+
+        headerStyle: PropTypes.object,
+        overlayStyle: PropTypes.object,
+        cardStyle:PropTypes.object,
+        indexStyle: PropTypes.object,
+        statusStyle: PropTypes.object,
     };
 
     constructor(props) {
@@ -54,66 +64,120 @@ export default class Sheet extends Component {
             })
         }
     };
-}
 
-const styles = {
-    header: {
-        backgroundColor: Sheet.colours.header.background,
-        borderColor: Sheet.colours.header.border,
-        color: 'black',
-        display: 'inline-block',
-        borderRightStyle: 'inset',
-        borderBottomStyle: 'inset',
-        borderRightWidth: '2px',
-        borderBottomWidth: '2px',
-        zIndex: '999'
-    },
-    overlay: {
-        text: {
+    render() {
+        let headerStyle = {
+            ...{
+                backgroundColor: Sheet.colours.header.background,
+                borderColor: Sheet.colours.header.border,
+                color: 'black',
+                display: 'inline-block',
+                borderRightStyle: 'inset',
+                borderBottomStyle: 'inset',
+                borderRightWidth: '2px',
+                borderBottomWidth: '2px',
+                zIndex: '999'
+            },
+            ...this.props.headerStyle
+        };
+        let overlayBg = this.props.overlayStyle || Sheet.colours.sheet.fade;
+        let statusStyle = {
+            ...{
+                display: 'inline-block',
+                fontSize: '11px',
+                textAlign: 'center'
+            }, ...this.props.statusStyle
+        };
+        let cardStyle = {
+            ... {
+                margin: '1px 1px',
+                minWidth: '150px',
+                textAlign: 'left',
+                height: '100%',
+                border: ''
+            },
+            ...this.props.cardStyle
+        };
+        let indexStyle = {
+            ...{
+                display: 'inline-block',
+                color: Sheet.colours.sheet.value,
+                fontSize: '22px',
+                zIndex: '999'
+            },
+            ...this.props.indexStyle
+        };
+
+        const valueStyle = {
+            fontSize: '100px',
+            textAlign: 'center',
+            position: 'absolute',
+            cursor: 'pointer',
+            width: '100%',
+            WebkitTouchCallout: "none",
+            WebkitUserSelect: "none",
+            KhtmlUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+            userSelect: "none",
+        };
+        const overlayTextStyle = {
             color: Sheet.colours.sheet.fadeText,
             marginRight: '16px !important'
-        },
-        bg: Sheet.colours.sheet.fade
-    },
+        };
+        const headerBar = {
+            display: 'flex',
+            justifyContent:'space-between'
+        };
 
-    card: {
-        margin: '1px 1px',
-        minWidth: '150px',
-        textAlign: 'left',
-        height: '100%',
-        border: ''
-    },
 
-    index: {
-        display: 'inline-block',
-        color: Sheet.colours.sheet.value,
-        fontSize: '22px',
-        zIndex: '999'
-    },
+        return (
 
-    value: {
-        fontSize: '100px',
-        textAlign: 'center',
-        position: 'absolute',
-        cursor: 'pointer',
-        width: '100%',
-        WebkitTouchCallout: "none",
-        WebkitUserSelect: "none",
-        KhtmlUserSelect: "none",
-        MozUserSelect: "none",
-        msUserSelect: "none",
-        userSelect: "none",
-    },
+            <GridTile
+                key={this.props.identifier}
+                title={this.props.title}
+                titleStyle={overlayTextStyle}
+                style={overlayTextStyle}
+                titleBackground={overlayBg}
+            >
+                <Paper
+                    style={cardStyle}>
+                    <OverlayTrigger
+                        overlay={
+                            (<Tooltip id={"tooltip-sheet-id-" + this.props.identifier}>
+                                More Information
+                            </Tooltip>)}
+                        placement='top'
+                        delayShow={300}
+                        delayHide={150}
 
-    statusText: {
-        display: 'inline-block',
-        fontSize: '11px',
-        textAlign: 'center'
-    },
-    headerBar: {
-        display: 'flex',
-        justifyContent: 'space-between'
-    }
-};
-
-export {styles}
+                    >
+                        <div
+                            onMouseEnter={this.onMouseEnter}
+                            onMouseLeave={this.onMouseLeave}
+                            onClick={this.props.onClick}
+                            style={{...valueStyle, ...(this.state.isHovered ? {color: SampleSheet.colours.sheet.valueHover} : {color: SampleSheet.colours.sheet.value})}}>
+                            {this.props.value}
+                        </div>
+                    </OverlayTrigger>
+                    <div style={headerBar}>
+                        <h5 style={headerStyle}>
+                            {this.props.header}
+                        </h5>
+                        {this.props.highlight !== undefined ?
+                            (
+                                <h6 style={{...styles.statusText, ...{color: this.props.highlight.color}}}>
+                                    {this.props.highlight.type}
+                                </h6>
+                            ) : null
+                        }
+                        <h6 style={indexStyle}>
+                            {1 + this.props.index}
+                        </h6>
+                    </div>
+                </Paper>
+            </GridTile>
+        )
+            ;
+    };
+}

@@ -7,9 +7,9 @@ import ParityInfo from "./Components/ParityInfo";
 
 const styles = {
     parent: {
-        // display: 'flex',
-        // flexWrap: 'wrap',
-        // justifyContent: 'space-around',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
     },
     gridList: {
         display: 'flex',
