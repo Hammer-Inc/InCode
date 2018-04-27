@@ -6,29 +6,44 @@ import Backdrop from "./Components/Backdrop"
 import CodewordInput from "./Components/CodewordInput";
 import PropTypes from "prop-types";
 import CodewordOutput from "./Components/CodewordOutput";
+import ModeStepper from "./Components/ModeStepper";
 
-export default class Navigation extends Component {
+class Navigation extends Component {
     static propTypes = {
-        doUpdate: PropTypes.func,
-        information: PropTypes.object
-
+        doUpdate: PropTypes.func.isRequired,
+        information: PropTypes.object,
     };
+
+    static validModes = {"send": ["binary", "string"], "receive": ["validate"]};
 
     constructor(props) {
         super(props);
         this.state = {
-            open: false,
-            input_state: {
+            open: true,
+            inputState: {
                 data: "",
                 type: "binary"
             },
+            mode: "send",
         };
     }
+
+
+
+    handleModeUpdate = (newMode) => {
+        this.setState({
+            mode: newMode
+        })
+    };
 
     handleToggle = () => this.setState({open: !this.state.open});
 
     handleInputChange = (newState) => {
-        this.setState({input_state: newState});
+        let newMode = this.state.mode === "send" ? "receive" : "send";
+        this.setState({
+            inputState: newState,
+            mode: newMode
+        });
     };
 
     // Cascade update at correct levels
@@ -44,12 +59,15 @@ export default class Navigation extends Component {
         return (
             <nav>
                 <AppBar
-                    title={this.state.open ? "" : "Hamming Simulator"}
+                    title={this.state.open ? "Hamming Simulator" : "Hamming Simulator"}
                     iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationMenu/></IconButton>}
                 />
-                <Drawer open={this.state.open}>
+                <Drawer
+                    open={this.state.open}
+                    width={400}
+                >
                     <AppBar
-                        title="Options"
+                        title="Settings"
                         titleStyle={{cursor: 'pointer'}}
                         onTitleTouchTap={this.handleToggle}
                         iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationClose/></IconButton>}
@@ -57,33 +75,38 @@ export default class Navigation extends Component {
                     <div
                         style={{margin: "10px"}}
                     >
-                        <Paper
-                            zDepth={1}
-                            rounded={true}
-                        >
-                            <CodewordInput
-                                doUpdate={this.doUpdate}
-                                inputStateChange={this.handleInputChange}
-                                input_state={this.state.input_state}
-                                information={this.props.information}
-                            />
-                        </Paper>
-                        <br/>
-                        <Paper
-                            zDepth={2}
-                            rounded={true}
-                        >
-                            <CodewordOutput
-                                doUpdate={this.doUpdate}
-                                inputStateChange={this.handleInputChange}
-                                input_state={this.state.input_state}
-                                information={this.props.information}
-                            />
-                        </Paper>
-                        {/*<CodewordOutput*/}
-                        {/*doUpdate={this.doUpdate}*/}
-                        {/*information={this.props.information}*/}
-                        {/*/>*/}
+                        <ModeStepper
+                            input_mode={this.state.mode}
+                            on_mode_change={this.handleModeUpdate}
+                        />
+                        {
+                            this.state.mode === "send" ? (
+                                <Paper
+                                    zDepth={1}
+                                    rounded={true}
+                                >
+                                    <CodewordInput
+                                        doUpdate={this.doUpdate}
+                                        inputStateChange={this.handleInputChange}
+                                        inputState={this.state.inputState}
+                                        information={this.props.information}
+                                    />
+                                </Paper>
+                            ) : this.state.mode === "receive" ? (
+                                <Paper
+                                    zDepth={2}
+                                    rounded={true}
+                                >
+
+                                    <CodewordOutput
+                                        doUpdate={this.doUpdate}
+                                        inputStateChange={this.handleInputChange}
+                                        inputState={this.state.inputState}
+                                        information={this.props.information}
+                                    />
+                                </Paper>
+                            ) : null
+                        }
                     </div>
                 </Drawer>
 
@@ -92,3 +115,5 @@ export default class Navigation extends Component {
         );
     }
 }
+
+export default Navigation

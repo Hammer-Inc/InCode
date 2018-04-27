@@ -1,5 +1,5 @@
 import React, {Component} from "react/cjs/react.production.min";
-import {FlatButton, Tab, Tabs, TextField} from "material-ui";
+import {Card, CardActions, CardHeader, CardText, FlatButton, TextField} from "material-ui";
 import validateResponse, {matchers} from "../Logic/API";
 import {apiLocation, endpoint} from "../config"
 import PropTypes from 'prop-types';
@@ -8,7 +8,7 @@ export default class CodewordOutput extends Component {
     static propTypes = {
         doUpdate: PropTypes.func,
         inputStateChange: PropTypes.func,
-        input_state: PropTypes.object,
+        inputState: PropTypes.object,
         information: PropTypes.object,
     };
 
@@ -20,21 +20,25 @@ export default class CodewordOutput extends Component {
                 validation_state: '',
             },
             loading: false,
-            mode: "validate"
+            mode: "validate",
+            steps: {
+                0: true,
+                1: false,
+            }
         };
     }
 
-    componentWillReceiveProps(nextProps) {
 
-        if (nextProps.information.codeword !== null &&
-            nextProps.information.codeword !== this.props.information.codeword) {
-            this.setState({
-                validate: {
-                    text: nextProps.information.codeword,
-                    validation_state: '',
-                }
-            })
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let result = {};
+        if (nextProps.information.codeword !== null) {
+            result[prevState.mode] = {
+                text: nextProps.information.codeword,
+                validation_state: '',
+            };
+            return result
         }
+        return null;
     }
 
     getValidation = (value) => {
@@ -62,16 +66,23 @@ export default class CodewordOutput extends Component {
 
     };
 
-    onKeyUp = (event) => {
-        if(event.key === 'Enter'){
-            this.consumeEndpoint()
-        }
+    updateStep = (value, index) => {
+        console.log(value);
+        let temp = {
+            steps: this.state.steps
+        };
+        temp.steps[index] = value;
+        this.setState(temp);
     };
+
 
     consumeEndpoint = () => {
 
         if (this.getValidation(this.state[this.state.mode].text) !== '')
             return;
+        if (this.state.text === '')
+            return;
+
         let query_string = "codeword=" + this.state[this.state.mode].text;
         let request = {
             method: 'GET',
@@ -85,10 +96,11 @@ export default class CodewordOutput extends Component {
         fetch(apiLocation + endpoint + this.state.mode + "?" + query_string, request)
             .then(validateResponse)
             .then((data) => {
-                this.props.doUpdate(data);
                 this.setState({
                     loading: false,
                 });
+                this.props.doUpdate(data);
+
             }).catch((error) => {
             console.log(error);
             this.setState({
@@ -101,35 +113,132 @@ export default class CodewordOutput extends Component {
     render() {
         return (
             <div>
-                <Tabs
-                    value={this.state.mode}
+                <div
+                    style={{textAlign: 'left'}}
                 >
-                    <Tab label="Simulate parity errors" value="validate">
-                        <TextField
-                            onKeyDown = {this.onKeyUp}
-                            hintText={""}
-                            floatingLabelText={"Codeword with Parity"}
-                            value={this.state.validate.text}
-                            onChange={this.updateText}
-                            fullWidth={true}
-                            disabled={this.state.loading}
-                            errorText={this.state.validate.validation_state}
-                            multiLine={true}
-                            rowsMax={5}
-                        />
-                        <p>
-                            Here you can modify the codeword from the above message to show what happens when an error is detected.
-                        </p>
-                    </Tab>
-                </Tabs>
+                    <ReceiveTutorial
+                        nextCallback={() => this.updateStep(true, 1)}
+                        openCallback={(v) => this.updateStep(v, 0)}
+                        open={this.state.steps["0"]}
+                    />
+                    <Validator
+                        openCallback={(v) => this.updateStep(v, 1)}
+                        open={this.state.steps["1"]}
+                        mode={this.state.mode}
+                        text={this.state.validate.text}
+                        validation={this.state.validate.validation_state}
+                        generateCallback={this.consumeEndpoint}
+                        textCallback={this.updateText}
+                    />
 
-                <FlatButton label={this.state.loading ? "Loading" : "Validate"}
-                            primary={true}
-                            onClick={this.consumeEndpoint}
-                            disabled={this.state.loading || this.state[this.state.mode].validation_state !== ''}
-                />
+                </div>
+
             </div>
         )
     }
 
+}
+
+class ReceiveTutorial extends Component {
+    static propTypes = {
+        open: PropTypes.bool,
+        openCallback: PropTypes.func,
+        nextCallback: PropTypes.func,
+    };
+
+    render() {
+        return (
+            <Card
+                expanded={this.props.open}
+                onExpandChange={this.props.openCallback}
+            >
+                <CardHeader
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                    title={"Receiving Data"}
+                    subtitle={"Tutorial"}
+                />
+                <CardText
+                    expandable={true}
+                >
+                    When Data is received or read the receiving system uses the parity bits
+                    calculated at the sending end to confirm the validity of the read
+                    information. The bits are then stripped and passed up to the next layer
+                    of the OSI model
+                </CardText>
+                <CardActions
+                    expandable={true}
+                >
+                    <FlatButton
+                        label={"Next"}
+                        onClick={() => {
+                            this.props.nextCallback();
+                            this.props.openCallback(false)
+                        }}
+                        primary
+                        disabled={this.props.validation === '' || this.props.text === ''}
+                    />
+                </CardActions>
+            </Card>
+        )
+    }
+}
+
+class Validator extends Component {
+    static propTypes = {
+        mode: PropTypes.string,
+        open: PropTypes.bool,
+        openCallback: PropTypes.func,
+        text: PropTypes.string,
+        validation: PropTypes.string,
+        textCallback: PropTypes.func,
+        generateCallback: PropTypes.func,
+    };
+    onKeyUp = (event) => {
+        if (event.key === 'Enter') {
+            this.props.generateCallback()
+        }
+    };
+
+    render() {
+        let mode = this.props.mode;
+        let is_valid = mode === "validate";
+        // Paranoid as fuck but can remove some weird edge case bugs from the equation
+        if (!is_valid)
+            return null;
+        return (
+            <Card
+                expanded={this.props.open}
+                onExpandChange={this.props.openCallback}
+            >
+                <CardHeader
+                    title={"Step 3"}
+                    subtitle={"Enter text to validate"}
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                />
+                <CardText
+                    expandable={true}
+                >
+                    <TextField
+                        name={"codeword validate"}
+                        style={{marginTop: "0px"}}
+                        onKeyDown={this.onKeyUp}
+                        hintText={"110100"}
+                        value={this.props.text}
+                        onChange={this.props.textCallback}
+                        fullWidth={true}
+                        disabled={false}
+                        errorText={this.props.validation}
+                    />
+                </CardText>
+                <CardActions expandable={true}>
+                    <FlatButton label={"Validate"}
+                                onClick={this.props.generateCallback}
+                                disabled={false}
+                                primary={true}/>
+                </CardActions>
+            </Card>
+        )
+    }
 }

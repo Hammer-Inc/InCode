@@ -1,8 +1,10 @@
 import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import {GridTile, Paper} from "material-ui";
+import Tooltip from "react-bootstrap/es/Tooltip";
+import {OverlayTrigger} from "react-bootstrap";
 
-export default class BitCard extends Component {
+export default class ParitySheet extends Component {
     static propTypes = {
         bit: {
             position: PropTypes.number,
@@ -35,14 +37,14 @@ export default class BitCard extends Component {
     };
 
     onMouseEnter = () => {
-        if(this.state.isParity){
+        if (this.state.isParity) {
             this.setState({
                 isHovered: true
             })
         }
     };
     onMouseLeave = () => {
-        if(this.state.isParity){
+        if (this.state.isParity) {
             this.setState({
                 isHovered: false
             })
@@ -63,22 +65,24 @@ export default class BitCard extends Component {
                 borderColor: colouring.strong,
                 color: 'black',
                 display: 'inline-block',
-                borderRightStyle: 'double',
-                borderBottomStyle: 'double',
+                borderRightStyle: 'inset',
+                borderBottomStyle: 'inset',
                 borderRightWidth: '2px',
                 borderBottomWidth: '2px',
                 zIndex: '999'
             },
             overlay: {
                 text: {
-                    color: 'black'
+                    color: colouring.strong,
+                    marginRight: '16px !important'
                 },
-                bg: "linear-gradient(to top, " + colouring.strong + " 0%," + colouring.bright + " 70%," + colouring.transparent + "100%)"
+                bg: "linear-gradient(to top, " + colouring.transparent + " 0%," + colouring.transparent + " 70%," + colouring.transparent + "100%)"
             },
 
             card: {
                 margin: '1px 1px',
                 minWidth: '150px',
+                maxWidth: '150px',
                 textAlign: 'left',
                 height: '100%',
                 border: ''
@@ -101,7 +105,7 @@ export default class BitCard extends Component {
                 fontSize: '100px',
                 textAlign: 'center',
                 position: 'absolute',
-                width: '100%',
+                width: '150px',
                 WebkitTouchCallout: "none",
                 WebkitUserSelect: "none",
                 KhtmlUserSelect: "none",
@@ -123,7 +127,7 @@ export default class BitCard extends Component {
                 color: colouring.hard,
                 cursor: 'pointer'
             },
-            normal:{
+            normal: {
                 color: colouring.strong,
             }
         };
@@ -132,17 +136,29 @@ export default class BitCard extends Component {
                 key={this.props.bit.position}
                 title={this.state.isParity ? 'Parity' : 'Data'}
                 titleStyle={styling.overlay.text}
+                style={styling.overlay.text}
                 titleBackground={styling.overlay.bg}
             >
                 <Paper
                     style={{...styling.card, ...(this.props.isSelected ? styling.selectedCard : {}), ...(this.props.corrected ? styling.correctedCard : {})}}>
-                    <div
-                        onMouseEnter={this.onMouseEnter}
-                        onMouseLeave={this.onMouseLeave}
-                        onClick={this.onClickValue}
-                        style={{...styling.value, ...(this.state.isHovered ? styling.onHover : styling.normal)}}>
-                        {this.props.bit.value}
-                    </div>
+                    <OverlayTrigger
+                        overlay={
+                            (<Tooltip id={"tooltip-bit-" + this.props.bit.position}>
+                                More Information
+                            </Tooltip>)}
+                        placement='top'
+                        delayShow={300}
+                        delayHide={150}
+
+                    >
+                        <div
+                            onMouseEnter={this.onMouseEnter}
+                            onMouseLeave={this.onMouseLeave}
+                            onClick={this.onClickValue}
+                            style={{...styling.value, ...(this.state.isHovered ? styling.onHover : styling.normal)}}>
+                            {this.props.bit.value}
+                        </div>
+                    </OverlayTrigger>
                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                         <h5 style={styling.header}>
                             {
