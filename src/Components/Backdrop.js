@@ -6,6 +6,7 @@ export default class Backdrop extends Component {
             position: 'fixed',
             width: '100%',
             height: '100%',
+            top:'0px',
             backgroundColor: ' rgba(0, 0, 0, 0.6)',
             zIndex: '1000'
         };

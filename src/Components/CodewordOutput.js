@@ -3,6 +3,7 @@ import {Card, CardActions, CardHeader, CardText, FlatButton, TextField} from "ma
 import validateResponse, {matchers} from "../Logic/API";
 import {apiLocation, endpoint} from "../config"
 import PropTypes from 'prop-types';
+import {cyan500} from "material-ui/styles/colors";
 
 export default class CodewordOutput extends Component {
     static propTypes = {
@@ -176,7 +177,6 @@ class ReceiveTutorial extends Component {
                             this.props.openCallback(false)
                         }}
                         primary
-                        disabled={this.props.validation === '' || this.props.text === ''}
                     />
                 </CardActions>
             </Card>
@@ -230,13 +230,16 @@ class Validator extends Component {
                         fullWidth={true}
                         disabled={false}
                         errorText={this.props.validation}
+                        underlineStyle={{borderColor: cyan500}}
                     />
                 </CardText>
                 <CardActions expandable={true}>
                     <FlatButton label={"Validate"}
                                 onClick={this.props.generateCallback}
-                                disabled={false}
-                                primary={true}/>
+                                disabled={this.props.validation !== '' || this.props.text === ''}
+                                primary
+
+                    />
                 </CardActions>
             </Card>
         )

@@ -359,13 +359,14 @@ class DataInput extends Component {
                         fullWidth={true}
                         disabled={false}
                         errorText={this.props.validation}
+                        underlineStyle={{borderColor:cyan500}}
                     />
                 </CardText>
                 <CardActions expandable={true}>
                     <FlatButton label={"Generate"}
                                 onClick={this.props.generateCallback}
-                                disabled={this.props.validation !== '' && this.props.text !== ''}
-                                primary={true}/>
+                                disabled={this.props.validation !== '' || this.props.text === ''}
+                                primary/>
                 </CardActions>
             </Card>
         )
