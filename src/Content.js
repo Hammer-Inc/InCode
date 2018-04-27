@@ -2,7 +2,7 @@ import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
-import ParityInfo from "./Components/ParityInfo";
+import ParityInfo from "./Components/InfoCard";
 import Sheet from "./Components/Sheets/Sheet";
 
 const styles = {

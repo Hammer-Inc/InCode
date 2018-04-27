@@ -10,21 +10,14 @@ export default class InfoCard extends Component {
 
 
     render() {
-        const styling = {
-            breakStuff: {
-                overflow: 'auto',
-                overflowWrap: 'break-word',
-                wordWrap: 'break-word',
-                msWordBreak: 'break-all',
-                wordBreak: 'break-word'
-            },
-        };
         let isParity = this.props.source.hasOwnProperty("components");
         return (
             <CardText>
-                <p>
-                    This bit can be calculated using the following formula:
-                </p>
+                {isParity ? (
+                    <p>
+                        This bit can be calculated using the following formula:
+                    </p>
+                ) : null}
                 <p>
                     {"\t"}={this.props.source.value}
                 </p>

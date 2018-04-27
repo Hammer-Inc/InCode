@@ -86,7 +86,7 @@ export default class Sheet extends Component {
             }, ...(this.props.highlight === undefined ? {} : this.props.highlight.style)
         };
         let cardStyle = {
-            ... {
+            ...{
                 margin: '1px 1px',
                 minWidth: '150px',
                 textAlign: 'left',
@@ -94,7 +94,7 @@ export default class Sheet extends Component {
                 border: ''
             },
             ...this.props.cardStyle,
-            ...(this.props.highlight !== undefined? this.props.highlight.style : {})
+            ...(this.props.highlight !== undefined ? this.props.highlight.style : {})
         };
         let indexStyle = {
             ...{
