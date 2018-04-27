@@ -4,7 +4,7 @@ import {GridTile, Paper} from "material-ui";
 import Tooltip from "react-bootstrap/es/Tooltip";
 import {OverlayTrigger} from "react-bootstrap";
 
-export default class BitCard extends Component {
+export default class ParitySheet extends Component {
     static propTypes = {
         bit: {
             position: PropTypes.number,
@@ -82,6 +82,7 @@ export default class BitCard extends Component {
             card: {
                 margin: '1px 1px',
                 minWidth: '150px',
+                maxWidth: '150px',
                 textAlign: 'left',
                 height: '100%',
                 border: ''
@@ -104,7 +105,7 @@ export default class BitCard extends Component {
                 fontSize: '100px',
                 textAlign: 'center',
                 position: 'absolute',
-                width: '100%',
+                width: '150px',
                 WebkitTouchCallout: "none",
                 WebkitUserSelect: "none",
                 KhtmlUserSelect: "none",

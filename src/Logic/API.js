@@ -14,8 +14,7 @@ let matchers = {
 };
 
 
-function sortbyposition(v1, v2)
-{
+function sortbyposition(v1, v2) {
     return v1.position - v2.position
 }
 export {matchers, sortbyposition}

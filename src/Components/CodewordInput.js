@@ -58,13 +58,16 @@ export default class CodewordInput extends Component {
         if (nextProps.inputState["type"] in prevState) {
             let temp = {
                 mode: nextProps.inputState["type"],
+                loading: false,
             };
             temp[nextProps.inputState.type] = {};
             temp[nextProps.inputState.type].text = nextProps.information.data;
             temp[nextProps.inputState.type].validation_state = '';
             return temp;
         }
-        return null
+        return {
+            loading: false
+        }
     }
 
     onCompleteTutorial = () => {
@@ -118,6 +121,10 @@ export default class CodewordInput extends Component {
     };
 
     consumeEndpoint = () => {
+        if (this.getValidation(this.state[this.state.mode].text) !== '')
+            return;
+        if (this.state.text === '')
+            return;
 
         this.setState({loading: true});
         let query_string = "codeword=" + this.state[this.state.mode].text;
@@ -132,11 +139,10 @@ export default class CodewordInput extends Component {
         fetch(apiLocation + CodewordInput.endpoint + this.state.mode + "?" + query_string, request)
             .then(validateResponse)
             .then((data) => {
-                this.props.doUpdate(data);
-
                 this.setState({
-                    loading: false,
-                });
+                    loading: false
+                })
+                this.props.doUpdate(data);
             }).catch((error) => {
             console.log(error);
             this.setState({
@@ -358,7 +364,7 @@ class DataInput extends Component {
                 <CardActions expandable={true}>
                     <FlatButton label={"Generate"}
                                 onClick={this.props.generateCallback}
-                                disabled={false}
+                                disabled={this.props.validation === '' || this.props.text === ''}
                                 primary={true}/>
                 </CardActions>
             </Card>

@@ -6,10 +6,10 @@ import {
     HardwareKeyboardArrowRight
 } from "material-ui/svg-icons/index";
 import React, {Component} from "react";
-import {FontIcon, Step, StepButton, Stepper} from "material-ui";
+import {IconButton} from "material-ui";
 import {cyan500} from "material-ui/styles/colors";
 
-export default class BitCard extends Component {
+export default class ModeStepper extends Component {
     static propTypes = {
         input_mode: PropTypes.string,
         on_mode_change: PropTypes.func,
@@ -17,56 +17,57 @@ export default class BitCard extends Component {
 
 
     render() {
-        let active_icon = {
+        const active_icon = {
             color: cyan500
         };
         let isSending = this.props.input_mode === 'send';
         let isReceiving = this.props.input_mode === 'receive';
-        return (<div>
-            <Stepper
-                linear={false}
-                connector={<ActionSettingsEthernet/>}
-            >
-                <Step completed={isSending}>
-                    <StepButton
-                        onClick={() => {
-                            this.props.on_mode_change("send")
-                        }}
-                        icon={
-                            <FontIcon>
-                                <HardwareComputer
-                                    style={isSending ? active_icon : {}}
-                                />
-                                <HardwareKeyboardArrowRight
-                                    style={isSending ? active_icon : {}}
-                                />
-                            </FontIcon>
-                        }
-                    >
-                    </StepButton>
-                </Step>
-                <Step completed={isReceiving}>
-                    <StepButton
-                        onClick={() => {
-                            this.props.on_mode_change("receive")
-                        }}
-
-                        icon={
-                            <FontIcon>
-                                <HardwareKeyboardArrowRight
-                                    style={isReceiving ? active_icon : {}}
-                                />
-                                <HardwareDesktopWindows
-                                    style={isReceiving ? active_icon : {}}
-                                />
-
-                            </FontIcon>
-                        }
-                    >
-
-                    </StepButton>
-                </Step>
-            </Stepper>
-        </div>)
+        const style = {
+            root: {
+                display: 'block'
+            },
+            header: {
+                display: 'flex',
+                flexDirection: 'row',
+                placeContent: 'center space-between',
+                alignItems: 'center',
+            }
+        };
+        return (
+            <div>
+                <div style={style.root}>
+                    <div style={style.header}>
+                        <div>
+                            <IconButton
+                                tooltip={"Send Data"}
+                                tooltipPosition={'bottom-center'}
+                                onClick={() => {
+                                    this.props.on_mode_change("send")
+                                }}
+                                iconStyle={isSending ? active_icon : {}}
+                            >
+                                <HardwareComputer/>
+                            </IconButton>
+                        </div>
+                        <div>
+                            <HardwareKeyboardArrowRight/>
+                            <ActionSettingsEthernet/>
+                            <HardwareKeyboardArrowRight/>
+                        </div>
+                        <div>
+                            <IconButton
+                                tooltip={"Receive Data"}
+                                tooltipPosition={'bottom-center'}
+                                onClick={() =>
+                                    this.props.on_mode_change("receive")
+                                }
+                                iconStyle={isReceiving ? active_icon : {}}
+                            >
+                                <HardwareDesktopWindows/>
+                            </IconButton>
+                        </div>
+                    </div>
+                </div>
+            </div>)
     }
 }
