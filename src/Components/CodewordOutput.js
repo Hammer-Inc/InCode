@@ -22,7 +22,7 @@ export default class CodewordOutput extends Component {
             loading: false,
             mode: "validate",
             steps: {
-                0: true,
+                0: false,
                 1: false,
             }
         };

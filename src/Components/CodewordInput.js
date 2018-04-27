@@ -123,7 +123,7 @@ export default class CodewordInput extends Component {
     consumeEndpoint = () => {
         if (this.getValidation(this.state[this.state.mode].text) !== '')
             return;
-        if (this.state.text === '')
+        if (this.state[this.state.mode].text === '')
             return;
 
         this.setState({loading: true});
@@ -141,7 +141,7 @@ export default class CodewordInput extends Component {
             .then((data) => {
                 this.setState({
                     loading: false
-                })
+                });
                 this.props.doUpdate(data);
             }).catch((error) => {
             console.log(error);
@@ -364,7 +364,7 @@ class DataInput extends Component {
                 <CardActions expandable={true}>
                     <FlatButton label={"Generate"}
                                 onClick={this.props.generateCallback}
-                                disabled={this.props.validation === '' || this.props.text === ''}
+                                disabled={this.props.validation !== '' && this.props.text !== ''}
                                 primary={true}/>
                 </CardActions>
             </Card>
