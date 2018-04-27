@@ -46,15 +46,20 @@ export default class Content extends Component {
         })
     };
 
-    resetHighlight = () => this.setState({highlight:[]});
+    resetHighlight = () => this.setState({highlight: []});
 
     setHighlightFromParity = (bit) => {
         let result = [bit.position];
         if (bit.hasOwnProperty('components')) {
-            for (let v in bit.components) {
-                result.append(this.props.information.message[v.index].position);
+            for (let val in bit.components) {
+                let value= bit.components[val];
+                let target = this.props.information.message[value.index-1];
+                console.log(target.position);
+                result = result.concat(target.position);
+
             }
         }
+        console.log(result);
         this.setState({
             highlight: result
         });
@@ -62,7 +67,6 @@ export default class Content extends Component {
     };
 
     render() {
-        let highlight = this.state.highlight;
         let target = this.state.infoTarget;
         let hasElements = this.props.information.message.length !== 0;
         const highlightStyle = {
@@ -76,44 +80,38 @@ export default class Content extends Component {
         let elements = this.props.information.parity.concat(this.props.information.message).sort(sortbyposition).reverse();
         const elementsAsGrid = (e) => e.map((bit) => {
                 let is_parity = bit.hasOwnProperty("components");
-                let colour = is_parity ? 'rgb(200,0,0)' : 'rgb(0,200,200)';
+                let rgb = is_parity ? '200,0,0' : '0,200,200';
+                let colour_a = 'rgba(' + rgb + '0.7)';
+                let colour_b = 'rgba(' + rgb + '0.3)';
                 return (
                     <Sheet identifier={bit.position} value={bit.value} index={bit.position}
                            header={(is_parity ? "P" : "D") + bit.index}
                            onClick={() => {
-                               if(is_parity) {
-                                   if(this.state.infoTarget.position === bit.position){
-                                       this.resetHighlight()
-                                   }else {
-                                       this.setHighlightFromParity(bit)
-                                   }
+                               if (is_parity) {
+                                   this.setHighlightFromParity(bit)
                                }
                                this.setInfoTarget(bit)
 
                            }}
                            title={is_parity ? "Parity" : "Data"}
-                           highlight={() => {
-                               if (isHighlighted(bit)) {
-                                   return {
-                                       type: "Component",
-                                       style: highlightStyle
-                                   }
-
-                               }
-                           }}
-                           cardStyle={{color: colour}}
-                           headerStyle={{borderColor: colour, backgroundColor: colour}}
-                           indexStyle={{color: colour}}
-                           overlayStyle={colour}
-
+                           highlight={isHighlighted(bit) ? {type:"Component", style:highlightStyle} : undefined}
+                           cardStyle={highlightStyle}
+                           headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
+                           indexStyle={{color: colour_b}}
                     />
                 )
             }
         );
         const sample = () => [0, 1, 2, 3, 4, 5].map((x) => {
             return (
-                <Sheet identifier={'sample-0'} value={x % 2} index={x} header={"s" + x} onClick={() => {
-                }} title={"Sample"}/>
+                <Sheet
+                    identifier={'sample-0'}
+                    value={x % 2}
+                    index={x}
+                    header={"s" + x}
+                    onClick={() => {
+                    }}
+                    title={"Sample"}/>
             )
         });
         return (
@@ -139,6 +137,7 @@ export default class Content extends Component {
                                 calculated for the information entered.
                             </p>
                             <p style={{display: !hasElements ? 'none' : 'inherit'}}>
+                                <strong>Hint!</strong> Click on a card to see more information about it.
                             </p>
                         </CardText>
                     </Card>
@@ -160,7 +159,7 @@ export default class Content extends Component {
                             />
                         ) : null}
 
-                        {target !== undefined? (
+                        {target !== undefined ? (
                             <ParityInfo
                                 source={target}
                             />

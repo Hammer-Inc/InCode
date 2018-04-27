@@ -93,7 +93,8 @@ export default class Sheet extends Component {
                 height: '100%',
                 border: ''
             },
-            ...this.props.cardStyle
+            ...this.props.cardStyle,
+            ...(this.props.highlight !== undefined? this.props.highlight.style : {})
         };
         let indexStyle = {
             ...{
@@ -111,6 +112,7 @@ export default class Sheet extends Component {
             position: 'absolute',
             cursor: 'pointer',
             width: '100%',
+            color: 'inherit',
             WebkitTouchCallout: "none",
             WebkitUserSelect: "none",
             KhtmlUserSelect: "none",
