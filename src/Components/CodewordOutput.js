@@ -68,7 +68,6 @@ export default class CodewordOutput extends Component {
     };
 
     updateStep = (value, index) => {
-        console.log(value);
         let temp = {
             steps: this.state.steps
         };

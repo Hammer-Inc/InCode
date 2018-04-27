@@ -78,7 +78,6 @@ export default class CodewordInput extends Component {
         if (value === "") {
             return ''
         }
-        // console.log(value);
         if (this.state.mode === "string") {
             if (value.match(matchers["string"])) {
                 return ''
@@ -153,7 +152,6 @@ export default class CodewordInput extends Component {
     };
 
     updateStep = (value, index) => {
-        console.log(value);
         let temp = {
             steps: this.state.steps
         };
