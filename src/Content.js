@@ -4,7 +4,7 @@ import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import ParityInfo from "./Components/InfoCard";
 import Sheet from "./Components/Sheets/Sheet";
-import {yellow300} from "material-ui/styles/colors";
+import {green300, yellow300} from "material-ui/styles/colors";
 
 const styles = {
     parent: {
@@ -53,8 +53,8 @@ export default class Content extends Component {
         let result = [bit.position];
         if (bit.hasOwnProperty('components')) {
             for (let val in bit.components) {
-                let value= bit.components[val];
-                let target = this.props.information.message[value.index-1];
+                let value = bit.components[val];
+                let target = this.props.information.message[value.index - 1];
                 console.log(target.position);
                 result = result.concat(target.position);
 
@@ -82,6 +82,7 @@ export default class Content extends Component {
         let elements = this.props.information.parity.concat(this.props.information.message).sort(sortbyposition).reverse();
         const elementsAsGrid = (e) => e.map((bit) => {
                 let is_parity = bit.hasOwnProperty("components");
+                let is_corrected = this.props.information.syndrome.errors.index === bit.position
                 let rgb = is_parity ? '200,0,0' : '0,200,200';
                 let colour_a = 'rgba(' + rgb + '0.7)';
                 let colour_b = 'rgba(' + rgb + '0.3)';
@@ -96,8 +97,9 @@ export default class Content extends Component {
 
                            }}
                            title={is_parity ? "Parity" : "Data"}
-                           highlight={isHighlighted(bit) ? {type:"Component", style:highlightStyle} : undefined}
+                           highlight={isHighlighted(bit) ? {type: "Component", style: highlightStyle} : is_corrected ? {type:"Corrected", style:{}} : undefined}
                            headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
+                           cardStyle={is_corrected? {backgroundColor:green300}:{}}
                            indexStyle={{color: colour_b}}
                     />
                 )
