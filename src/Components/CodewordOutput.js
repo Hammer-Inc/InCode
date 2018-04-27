@@ -80,6 +80,9 @@ export default class CodewordOutput extends Component {
 
         if (this.getValidation(this.state[this.state.mode].text) !== '')
             return;
+        if (this.state.text === '')
+            return;
+
         let query_string = "codeword=" + this.state[this.state.mode].text;
         let request = {
             method: 'GET',
@@ -93,10 +96,11 @@ export default class CodewordOutput extends Component {
         fetch(apiLocation + endpoint + this.state.mode + "?" + query_string, request)
             .then(validateResponse)
             .then((data) => {
-                this.props.doUpdate(data);
                 this.setState({
                     loading: false,
                 });
+                this.props.doUpdate(data);
+
             }).catch((error) => {
             console.log(error);
             this.setState({
@@ -115,7 +119,7 @@ export default class CodewordOutput extends Component {
                     <ReceiveTutorial
                         nextCallback={() => this.updateStep(true, 1)}
                         openCallback={(v) => this.updateStep(v, 0)}
-                        open={true}
+                        open={this.state.steps["0"]}
                     />
                     <Validator
                         openCallback={(v) => this.updateStep(v, 1)}
@@ -172,6 +176,7 @@ class ReceiveTutorial extends Component {
                             this.props.openCallback(false)
                         }}
                         primary
+                        disabled={this.props.validation === '' || this.props.text === ''}
                     />
                 </CardActions>
             </Card>
