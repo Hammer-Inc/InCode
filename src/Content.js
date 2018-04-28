@@ -2,9 +2,10 @@ import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
-import ParityInfo from "./Components/InfoCard";
+import InfoCard from "./Components/InfoCard";
 import Sheet from "./Components/Sheets/Sheet";
-import {green300, yellow300} from "material-ui/styles/colors";
+import {green100, green500, orange500} from "material-ui/styles/colors";
+
 
 const styles = {
     parent: {
@@ -29,13 +30,14 @@ export default class Content extends Component {
         super(props);
         this.state = {
             infoTarget: undefined,
-            highlight: []
+            highlight: [],
+            highlightOrigin: undefined,
         };
     }
 
-    setInfoTarget = (bit) => {
+    setInfoTarget = (type, obj, key) => {
         if (this.state.infoTarget !== undefined) {
-            if (bit.position === this.state.infoTarget.position) {
+            if (key === this.state.infoTarget.key) {
                 this.setState({
                     infoTarget: undefined
                 });
@@ -43,26 +45,27 @@ export default class Content extends Component {
             }
         }
         this.setState({
-            infoTarget: bit
+            infoTarget: {
+                type:type,
+                obj: obj,
+                key: key,
+            }
         })
     };
 
-    resetHighlight = () => this.setState({highlight: []});
+
+    resetHighlight = () => this.setState({highlight: [], highlightOrigin: undefined});
 
     setHighlightFromParity = (bit) => {
         let result = [bit.position];
         if (bit.hasOwnProperty('components')) {
             for (let val in bit.components) {
-                let value = bit.components[val];
-                let target = this.props.information.message[value.index - 1];
-                console.log(target.position);
-                result = result.concat(target.position);
-
+                result = result.concat(bit.components[val].position);
             }
         }
-        console.log(result);
         this.setState({
-            highlight: result
+            highlight: result,
+            highlightOrigin: bit.position,
         });
 
     };
@@ -71,8 +74,8 @@ export default class Content extends Component {
         let target = this.state.infoTarget;
         let hasElements = this.props.information.message.length !== 0;
         const highlightStyle = {
-            color: yellow300,
-            border: '2px solid yellow'
+            color: orange500,
+            border: '2px solid lightyellow'
         };
         const isHighlighted = (bit) => {
             if (this.state.highlight.includes(bit.position)) {
@@ -82,25 +85,47 @@ export default class Content extends Component {
         let elements = this.props.information.parity.concat(this.props.information.message).sort(sortbyposition).reverse();
         const elementsAsGrid = (e) => e.map((bit) => {
                 let is_parity = bit.hasOwnProperty("components");
-                let is_corrected = this.props.information.syndrome.errors.index === bit.position
+                let is_corrected = this.props.information.syndrome.errors.index === bit.position;
+                let is_selected = this.state.highlightOrigin === bit.position;
                 let rgb = is_parity ? '200,0,0' : '0,200,200';
                 let colour_a = 'rgba(' + rgb + '0.7)';
                 let colour_b = 'rgba(' + rgb + '0.3)';
+                let uniqueID =  "full://" + this.props.information.codeword + ":" + bit.position;
                 return (
-                    <Sheet identifier={bit.position} value={bit.value} index={bit.position}
+                    <Sheet key={uniqueID} identifier={uniqueID} value={bit.value} index={bit.position}
                            header={(is_parity ? "P" : "D") + bit.index}
                            onClick={() => {
-                               if (is_parity) {
-                                   this.setHighlightFromParity(bit)
-                               }
-                               this.setInfoTarget(bit)
-
+                               this.setInfoTarget(is_parity ? "parity": "data" ,bit, uniqueID)
                            }}
                            title={is_parity ? "Parity" : "Data"}
-                           highlight={isHighlighted(bit) ? {type: "Component", style: highlightStyle} : is_corrected ? {type:"Corrected", style:{}} : undefined}
+                           highlight={
+                               isHighlighted(bit) ?
+                                   {
+                                       type: "",
+                                       style: highlightStyle,
+                                       statusStyle: {colour: 'black'}
+                                   }
+                                   :
+                                   is_corrected ?
+                                       {
+                                           type: "",
+                                           style: {backgroundColor: green100},
+                                           statusStyle: {colour: green500}
+                                       }
+                                       : undefined
+                           }
                            headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
-                           cardStyle={is_corrected? {backgroundColor:green300}:{}}
                            indexStyle={{color: colour_b}}
+
+                           iconEnabled={is_parity}
+                           iconSelected={is_selected}
+                           onIconClick={() => {
+                               if (is_selected) {
+                                   this.resetHighlight()
+                               } else {
+                                   this.setHighlightFromParity(bit)
+                               }
+                           }}
                     />
                 )
             }
@@ -144,10 +169,21 @@ export default class Content extends Component {
                             </p>
                         </CardText>
                     </Card>
+                    <br/>
                     <Card>
                         <CardHeader
-                            title={'Result:'}
+                            title={'View Results'}
+                            subtitle={"Information"}
                         />
+                        <CardText>
+                            <div>
+                                Raw Data: {this.props.information.data}
+                            </div>
+                            <div>
+                                Data including parity bits: {this.props.information.codeword}
+                            </div>
+                        </CardText>
+
                         <CardText>
                             <GridList
                                 style={styles.gridList}
@@ -156,18 +192,14 @@ export default class Content extends Component {
                             </GridList>
                         </CardText>
                         {target !== undefined ? (
-                            <CardHeader
-                                title={"More Information"}
-                                subtitle={"For bit at position " + target.position}
-                            />
-                        ) : null}
-
-                        {target !== undefined ? (
-                            <ParityInfo
+                            <InfoCard
                                 source={target}
                             />
+
                         ) : null}
+
                     </Card>
+
                 </div>
             </div>
         );

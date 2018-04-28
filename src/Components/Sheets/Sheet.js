@@ -2,7 +2,8 @@ import {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import React from "react";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import {GridTile, Paper} from "material-ui";
+import {Checkbox, GridTile, Paper} from "material-ui";
+import {ActionTurnedIn, ActionTurnedInNot} from "material-ui/svg-icons/index";
 
 export default class Sheet extends Component {
     static colours = {
@@ -27,17 +28,22 @@ export default class Sheet extends Component {
         index: PropTypes.number.isRequired,
         header: PropTypes.string.isRequired,
         title: PropTypes.string,
-
         onClick: PropTypes.func.isRequired,
         highlight: PropTypes.shape({
             type: PropTypes.string.isRequired,
-            style: PropTypes.string.isRequired,
+            style: PropTypes.object.isRequired,
+            statusStyle: PropTypes.object.isRequired,
         }),
 
         headerStyle: PropTypes.object,
         overlayStyle: PropTypes.object,
         cardStyle: PropTypes.object,
         indexStyle: PropTypes.object,
+
+        iconEnabled: PropTypes.bool,
+        iconSelected: PropTypes.bool,
+        onIconClick: PropTypes.func,
+
     };
 
     constructor(props) {
@@ -83,7 +89,7 @@ export default class Sheet extends Component {
                 display: 'inline-block',
                 fontSize: '11px',
                 textAlign: 'center'
-            }, ...(this.props.highlight === undefined ? {} : this.props.highlight.style)
+            }, ...(this.props.highlight === undefined ? {} : this.props.highlight.statusStyle)
         };
         let cardStyle = {
             ...{
@@ -138,6 +144,16 @@ export default class Sheet extends Component {
                 titleStyle={overlayTextStyle}
                 style={overlayTextStyle}
                 titleBackground={overlayBg}
+                actionIcon={
+                    <Checkbox
+                        onClick={this.props.onIconClick}
+                        disabled={!this.props.iconEnabled}
+                        checked={this.props.iconSelected}
+                        checkedIcon={<ActionTurnedIn/>}
+                        uncheckedIcon={<ActionTurnedInNot/>}
+                        style={!this.props.iconEnabled ? {display:'none'}: undefined}
+                    />
+                }
             >
                 <Paper
                     style={cardStyle}>
