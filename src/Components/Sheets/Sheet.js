@@ -4,6 +4,7 @@ import React from "react";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {Checkbox, GridTile, Paper} from "material-ui";
 import {ActionTurnedIn, ActionTurnedInNot} from "material-ui/svg-icons/index";
+import {grey900} from "material-ui/styles/colors";
 
 export default class Sheet extends Component {
     static colours = {
@@ -149,9 +150,10 @@ export default class Sheet extends Component {
                         onClick={this.props.onIconClick}
                         disabled={!this.props.iconEnabled}
                         checked={this.props.iconSelected}
-                        checkedIcon={<ActionTurnedIn/>}
+                        checkedIcon={<ActionTurnedIn style={{fill: grey900}}/>}
                         uncheckedIcon={<ActionTurnedInNot/>}
-                        style={!this.props.iconEnabled ? {display:'none'}: undefined}
+                        iconStyle={{fill: grey900}}
+                        style={!this.props.iconEnabled ? {display: 'none'} : undefined}
                     />
                 }
             >
