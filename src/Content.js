@@ -4,7 +4,7 @@ import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import InfoCard from "./Components/InfoCard";
 import Sheet from "./Components/Sheets/Sheet";
-import {green100, green500, orange500} from "material-ui/styles/colors";
+import {blue300, green100, green300, green500} from "material-ui/styles/colors";
 
 
 const styles = {
@@ -46,7 +46,7 @@ export default class Content extends Component {
         }
         this.setState({
             infoTarget: {
-                type:type,
+                type: type,
                 obj: obj,
                 key: key,
             }
@@ -74,13 +74,13 @@ export default class Content extends Component {
         let target = this.state.infoTarget;
         let hasElements = this.props.information.message.length !== 0;
         const highlightStyle = {
-            color: orange500,
-            border: '2px solid lightyellow'
+            border: '2px solid red'
         };
-        const isHighlighted = (bit) => {
-            if (this.state.highlight.includes(bit.position)) {
-                return true
-            }
+        const infoStyle = {
+            filter: 'brightness(95%)'
+        };
+        const correctionStyle = {
+            backgroundColor: green300
         };
         let elements = this.props.information.parity.concat(this.props.information.message).sort(sortbyposition).reverse();
         const elementsAsGrid = (e) => e.map((bit) => {
@@ -90,29 +90,35 @@ export default class Content extends Component {
                 let rgb = is_parity ? '200,0,0' : '0,200,200';
                 let colour_a = 'rgba(' + rgb + '0.7)';
                 let colour_b = 'rgba(' + rgb + '0.3)';
-                let uniqueID =  "full://" + this.props.information.codeword + ":" + bit.position;
+                let uniqueID = "full://" + this.props.information.codeword + ":" + bit.position;
+                let is_info = this.state.infoTarget !== undefined && uniqueID === this.state.infoTarget.key;
+                let is_highlighted = this.state.highlight.includes(bit.position);
+
+                let is_special = is_highlighted || is_info || is_corrected;
+                let cardStyleSpecial = {
+                    ...(is_highlighted ? highlightStyle : {}),
+                    ...(is_info ? infoStyle : {}),
+                    ...(is_corrected ? correctionStyle : {})
+                };
+                let statusStyle = {
+                    color: blue300
+                };
+                let statusType = is_info ? "Selected" : "";
                 return (
                     <Sheet key={uniqueID} identifier={uniqueID} value={bit.value} index={bit.position}
                            header={(is_parity ? "P" : "D") + bit.index}
                            onClick={() => {
-                               this.setInfoTarget(is_parity ? "parity": "data" ,bit, uniqueID)
+                               this.setInfoTarget(is_parity ? "parity" : "data", bit, uniqueID)
                            }}
                            title={is_parity ? "Parity" : "Data"}
                            highlight={
-                               isHighlighted(bit) ?
+                               is_special?
                                    {
-                                       type: "",
-                                       style: highlightStyle,
-                                       statusStyle: {colour: 'black'}
-                                   }
-                                   :
-                                   is_corrected ?
-                                       {
-                                           type: "",
-                                           style: {backgroundColor: green100},
-                                           statusStyle: {colour: green500}
-                                       }
-                                       : undefined
+                                       type: statusType,
+                                       style: cardStyleSpecial,
+                                       statusStyle: statusStyle
+                                   }:
+                                   undefined
                            }
                            headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
                            indexStyle={{color: colour_b}}

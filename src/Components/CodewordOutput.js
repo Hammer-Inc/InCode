@@ -23,8 +23,8 @@ export default class CodewordOutput extends Component {
             loading: false,
             mode: "validate",
             steps: {
-                0: false,
-                1: false,
+                0: localStorage.getItem("seenTutorial_CWout") !== '1',
+                1: localStorage.getItem("seenTutorial_CWout") === '1',
             }
         };
     }
@@ -75,6 +75,9 @@ export default class CodewordOutput extends Component {
         this.setState(temp);
     };
 
+    onCompleteTutorial = () => {
+        localStorage.setItem("seenTutorial_CWout", '1')
+    };
 
     consumeEndpoint = () => {
 
@@ -117,7 +120,7 @@ export default class CodewordOutput extends Component {
                     style={{textAlign: 'left'}}
                 >
                     <ReceiveTutorial
-                        nextCallback={() => this.updateStep(true, 1)}
+                        nextCallback={() => {this.updateStep(true, 1); this.onCompleteTutorial()}}
                         openCallback={(v) => this.updateStep(v, 0)}
                         open={this.state.steps["0"]}
                     />
@@ -192,6 +195,7 @@ class Validator extends Component {
         validation: PropTypes.string,
         textCallback: PropTypes.func,
         generateCallback: PropTypes.func,
+        disableChange: PropTypes.bool,
     };
     onKeyUp = (event) => {
         if (event.key === 'Enter') {
@@ -227,15 +231,15 @@ class Validator extends Component {
                         value={this.props.text}
                         onChange={this.props.textCallback}
                         fullWidth={true}
-                        disabled={false}
+                        disabled={this.props.disableChange}
                         errorText={this.props.validation}
                         underlineStyle={{borderColor: cyan500}}
                     />
                 </CardText>
                 <CardActions expandable={true}>
-                    <FlatButton label={"Validate"}
+                    <FlatButton label={this.props.disableChange ? "Validate (Loading)": "Validate"}
                                 onClick={this.props.generateCallback}
-                                disabled={this.props.validation !== '' || this.props.text === ''}
+                                disabled={this.props.validation !== '' || this.props.text === '' || this.props.disableChange}
                                 primary
 
                     />
