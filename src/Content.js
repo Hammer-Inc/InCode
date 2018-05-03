@@ -4,7 +4,7 @@ import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import InfoCard from "./Components/InfoCard";
 import Sheet from "./Components/Sheets/Sheet";
-import {blue300, green100, green300, green500} from "material-ui/styles/colors";
+import {blue300, green300} from "material-ui/styles/colors";
 
 
 const styles = {
@@ -110,14 +110,14 @@ export default class Content extends Component {
                            onClick={() => {
                                this.setInfoTarget(is_parity ? "parity" : "data", bit, uniqueID)
                            }}
-                           title={is_parity ? "Parity" : "Data"}
+                           title={(hasElements ? "":"Sample ") + (is_parity ? "Parity" : "Data")}
                            highlight={
-                               is_special?
+                               is_special ?
                                    {
                                        type: statusType,
                                        style: cardStyleSpecial,
                                        statusStyle: statusStyle
-                                   }:
+                                   } :
                                    undefined
                            }
                            headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
@@ -136,18 +136,33 @@ export default class Content extends Component {
                 )
             }
         );
-        const sample = () => [0, 1, 2, 3, 4, 5].map((x) => {
-            return (
-                <Sheet
-                    identifier={'sample-0'}
-                    value={x % 2}
-                    index={x}
-                    header={"s" + x}
-                    onClick={() => {
-                    }}
-                    title={"Sample"}/>
-            )
-        });
+        const sampleCards = [
+            {
+                index: 1,
+                position: 2,
+                value: 1
+            },
+            {
+                components: [{
+                    index: 1,
+                    position: 2,
+                    value: 1
+                }],
+                index: 2,
+                position: 1,
+                value: 1,
+            },
+            {
+                components: [{
+                    index: 1,
+                    position: 2,
+                    value: 1
+                }],
+                index: 1,
+                position: 0,
+                value: 1,
+            },
+        ];
         return (
             <div style={{display: 'block'}}>
                 <div style={{textAlign: 'left'}}>
@@ -181,20 +196,22 @@ export default class Content extends Component {
                             title={'View Results'}
                             subtitle={"Information"}
                         />
-                        <CardText>
-                            <div>
-                                Raw Data: {this.props.information.data}
-                            </div>
-                            <div>
-                                Data including parity bits: {this.props.information.codeword}
-                            </div>
-                        </CardText>
-
+                        {hasElements ?
+                            <CardText>
+                                <div>
+                                    Raw Data: {this.props.information.data}
+                                </div>
+                                <div>
+                                    Data including parity bits: {this.props.information.codeword}
+                                </div>
+                            </CardText>
+                            :null
+                        }
                         <CardText>
                             <GridList
                                 style={styles.gridList}
                                 cols={'2.2'}>
-                                {hasElements ? elementsAsGrid(elements) : sample()}
+                                {hasElements ? elementsAsGrid(elements) : elementsAsGrid(sampleCards)}
                             </GridList>
                         </CardText>
                         {target !== undefined ? (
