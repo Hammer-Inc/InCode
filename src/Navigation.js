@@ -25,10 +25,23 @@ class Navigation extends Component {
                 type: "binary"
             },
             mode: "send",
+            width: 0,
+            height: 0
         };
     }
 
+    componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+    }
 
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+
+    updateWindowDimensions = () => {
+        this.setState({width: window.innerWidth, height: window.innerHeight});
+    };
 
     handleModeUpdate = (newMode) => {
         this.setState({
@@ -64,7 +77,7 @@ class Navigation extends Component {
                 />
                 <Drawer
                     open={this.state.open}
-                    width={400}
+                    width={this.state.width < 415? this.state.width - 15 : 400}
                 >
                     <AppBar
                         title="Settings"
