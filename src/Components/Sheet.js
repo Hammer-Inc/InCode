@@ -1,7 +1,6 @@
 import {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
 import React from "react";
-import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {Checkbox, GridTile, Paper} from "material-ui";
 import {ActionTurnedIn, ActionTurnedInNot} from "material-ui/svg-icons/index";
 import {grey900} from "material-ui/styles/colors";
@@ -159,24 +158,14 @@ export default class Sheet extends Component {
             >
                 <Paper
                     style={cardStyle}>
-                    <OverlayTrigger
-                        overlay={
-                            (<Tooltip id={"tooltip-sheet-id-" + this.props.identifier}>
-                                More Information
-                            </Tooltip>)}
-                        placement='top'
-                        delayShow={300}
-                        delayHide={150}
 
-                    >
-                        <div
-                            onMouseEnter={this.onMouseEnter}
-                            onMouseLeave={this.onMouseLeave}
-                            onClick={this.props.onClick}
-                            style={{...valueStyle, ...(this.state.isHovered ? {color: Sheet.colours.sheet.valueHover} : {color: Sheet.colours.sheet.value})}}>
-                            {this.props.value}
-                        </div>
-                    </OverlayTrigger>
+                    <div
+                        onMouseEnter={this.onMouseEnter}
+                        onMouseLeave={this.onMouseLeave}
+                        onClick={this.props.onClick}
+                        style={{...valueStyle, ...(this.state.isHovered ? {color: Sheet.colours.sheet.valueHover} : {color: Sheet.colours.sheet.value})}}>
+                        {this.props.value}
+                    </div>
                     <div style={headerBar}>
                         <h5 style={headerStyle}>
                             {this.props.header}

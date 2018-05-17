@@ -8,7 +8,7 @@ function validateResponse(response) {
 export default validateResponse
 
 let matchers = {
-    "string": /^[\w]+$/,
+    "string": /^[\w\s-]+$/,
     "binary": /^[01]+$/,
     "validate": /^[01]{3,}$/
 };

@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import {Card, CardHeader, CardText, GridList} from "material-ui";
 import {sortbyposition} from "./Logic/API";
 import InfoCard from "./Components/InfoCard";
-import Sheet from "./Components/Sheets/Sheet";
-import {blue300, green300} from "material-ui/styles/colors";
+import Sheet from "./Components/Sheet";
+import {blue300, lime300, lime500, red300, red500} from "material-ui/styles/colors";
+import CookieCard from "./Components/CookieCard";
 
 
 const styles = {
@@ -80,16 +81,16 @@ export default class Content extends Component {
             filter: 'brightness(95%)'
         };
         const correctionStyle = {
-            backgroundColor: green300
+            backgroundColor: lime300
         };
         let elements = this.props.information.parity.concat(this.props.information.message).sort(sortbyposition).reverse();
         const elementsAsGrid = (e) => e.map((bit) => {
                 let is_parity = bit.hasOwnProperty("components");
                 let is_corrected = this.props.information.syndrome.errors.index === bit.position;
                 let is_selected = this.state.highlightOrigin === bit.position;
-                let rgb = is_parity ? '200,0,0' : '0,200,200';
-                let colour_a = 'rgba(' + rgb + '0.7)';
-                let colour_b = 'rgba(' + rgb + '0.3)';
+                let accent_primary = is_parity ? red500 : lime500;
+                let accent_secondary = is_parity ? red300 : lime300;
+
                 let uniqueID = "full://" + this.props.information.codeword + ":" + bit.position;
                 let is_info = this.state.infoTarget !== undefined && uniqueID === this.state.infoTarget.key;
                 let is_highlighted = this.state.highlight.includes(bit.position);
@@ -110,7 +111,7 @@ export default class Content extends Component {
                            onClick={() => {
                                this.setInfoTarget(is_parity ? "parity" : "data", bit, uniqueID)
                            }}
-                           title={(hasElements ? "":"Sample ") + (is_parity ? "Parity" : "Data")}
+                           title={(hasElements ? "" : "Sample ") + (is_parity ? "Parity" : "Data")}
                            highlight={
                                is_special ?
                                    {
@@ -120,8 +121,8 @@ export default class Content extends Component {
                                    } :
                                    undefined
                            }
-                           headerStyle={{borderColor: colour_b, backgroundColor: colour_a}}
-                           indexStyle={{color: colour_b}}
+                           headerStyle={{borderColor: accent_secondary, backgroundColor: accent_primary}}
+                           indexStyle={{color: accent_secondary}}
 
                            iconEnabled={is_parity}
                            iconSelected={is_selected}
@@ -166,9 +167,8 @@ export default class Content extends Component {
         return (
             <div style={{display: 'block'}}>
                 <div style={{textAlign: 'left'}}>
-                    <Card
-                        expandable={true}
-                        initiallyExpanded={true}
+                    <CookieCard
+                        uniqueID={"ViewingResultsTutorial-1"}
                     >
                         <CardHeader
                             title={"Viewing results"}
@@ -189,7 +189,7 @@ export default class Content extends Component {
                                 <strong>Hint!</strong> Click on a card to see more information about it.
                             </p>
                         </CardText>
-                    </Card>
+                    </CookieCard>
                     <br/>
                     <Card>
                         <CardHeader
@@ -205,7 +205,7 @@ export default class Content extends Component {
                                     Data including parity bits: {this.props.information.codeword}
                                 </div>
                             </CardText>
-                            :null
+                            : null
                         }
                         <CardText>
                             <GridList

@@ -13,7 +13,7 @@ import validateResponse, {matchers} from "../Logic/API";
 import {apiLocation} from "../config"
 import PropTypes from 'prop-types';
 import {ContentFontDownload, ImageLooksOne} from "material-ui/svg-icons/index";
-import {cyan500} from "material-ui/styles/colors";
+import {cyan500, lime200} from "material-ui/styles/colors";
 
 
 export default class CodewordInput extends Component {
@@ -359,7 +359,7 @@ class DataInput extends Component {
                         fullWidth={true}
                         disabled={this.props.disableChange}
                         errorText={this.props.validation}
-                        underlineStyle={{borderColor: cyan500}}
+                        underlineStyle={{borderColor: lime200}}
                     />
                 </CardText>
                 <CardActions expandable={true}>

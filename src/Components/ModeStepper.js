@@ -7,7 +7,7 @@ import {
 } from "material-ui/svg-icons/index";
 import React, {Component} from "react";
 import {IconButton} from "material-ui";
-import {cyan500} from "material-ui/styles/colors";
+import {cyan500, lime500} from "material-ui/styles/colors";
 
 export default class ModeStepper extends Component {
     static propTypes = {
@@ -18,7 +18,7 @@ export default class ModeStepper extends Component {
 
     render() {
         const active_icon = {
-            color: cyan500
+            color: lime500
         };
         let isSending = this.props.input_mode === 'send';
         let isReceiving = this.props.input_mode === 'receive';

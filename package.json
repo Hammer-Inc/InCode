@@ -1,7 +1,7 @@
 {
   "name": "inCode",
   "version": "0.1.0",
-  "homepage" : "https://hammer-inc.github.io/incode/",
+  "homepage": "https://hammer-inc.github.io/InCode/",
   "private": true,
   "dependencies": {
     "material-ui": "^0.19.4",
@@ -16,6 +16,10 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.1.0"
   }
 }

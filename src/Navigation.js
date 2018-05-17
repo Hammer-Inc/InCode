@@ -72,7 +72,7 @@ class Navigation extends Component {
         return (
             <nav>
                 <AppBar
-                    title={this.state.open ? "Hamming Simulator" : "Hamming Simulator"}
+                    title={"Hamming Code Generator"}
                     iconElementLeft={<IconButton onClick={this.handleToggle}><NavigationMenu/></IconButton>}
                 />
                 <Drawer

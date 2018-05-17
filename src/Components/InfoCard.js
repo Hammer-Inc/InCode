@@ -1,6 +1,7 @@
 import React, {Component} from "react/cjs/react.production.min";
 import PropTypes from "prop-types";
-import {Card, CardHeader, CardText} from "material-ui";
+import {CardHeader, CardText} from "material-ui";
+import CookieCard from "./CookieCard";
 
 export default class InfoCard extends Component {
     static propTypes = {
@@ -50,9 +51,9 @@ export default class InfoCard extends Component {
                 {
                     isParity ?
                         [
-                            <Card
+                            <CookieCard
+                                uniqueID={"MoreParityInformationTutorial-1"}
                                 children={MoreParityInfo}
-                                expandable={true} initiallyExpanded={false}
                             />,
                             <CardText>
                                 <div>
@@ -71,7 +72,8 @@ export default class InfoCard extends Component {
                     isData ? (
                         <div>
                             <h6>Raw Data bit</h6>
-                            This is a raw data bit with the value of {obj.value}, it is located at position {obj.index - 1} from the
+                            This is a raw data bit with the value of {obj.value}, it is located at
+                            position {obj.index - 1} from the
                             right in the raw data
                         </div>
                     ) : null
