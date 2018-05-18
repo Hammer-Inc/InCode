@@ -1,4 +1,4 @@
-let apiLocation = "http://localhost:5000";
+let apiLocation = "https://hammingsim.herokuapp.com/";
 let endpoint = "/api/v1/codeword/";
 
 export {apiLocation, endpoint};

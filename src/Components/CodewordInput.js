@@ -13,7 +13,7 @@ import validateResponse, {matchers} from "../Logic/API";
 import {apiLocation} from "../config"
 import PropTypes from 'prop-types';
 import {ContentFontDownload, ImageLooksOne} from "material-ui/svg-icons/index";
-import {cyan500} from "material-ui/styles/colors";
+import {cyan500, lime200} from "material-ui/styles/colors";
 
 
 export default class CodewordInput extends Component {
@@ -41,9 +41,9 @@ export default class CodewordInput extends Component {
             loading: false,
 
             steps: {
-                0: localStorage.getItem("seenTutorial") !== '1',
+                0: localStorage.getItem("seenTutorial_CWin") !== '1',
                 1: false,
-                2: false
+                2: localStorage.getItem("seenTutorial_CWin") === '1'
             }
         };
         if (mode === "string" || mode === "binary") {
@@ -71,14 +71,13 @@ export default class CodewordInput extends Component {
     }
 
     onCompleteTutorial = () => {
-        localStorage.setItem("seenTutorial", '1')
+        localStorage.setItem("seenTutorial_CWin", '1')
     };
 
     getValidation = (value) => {
         if (value === "") {
             return ''
         }
-        // console.log(value);
         if (this.state.mode === "string") {
             if (value.match(matchers["string"])) {
                 return ''
@@ -123,7 +122,7 @@ export default class CodewordInput extends Component {
     consumeEndpoint = () => {
         if (this.getValidation(this.state[this.state.mode].text) !== '')
             return;
-        if (this.state.text === '')
+        if (this.state[this.state.mode].text === '')
             return;
 
         this.setState({loading: true});
@@ -141,7 +140,7 @@ export default class CodewordInput extends Component {
             .then((data) => {
                 this.setState({
                     loading: false
-                })
+                });
                 this.props.doUpdate(data);
             }).catch((error) => {
             console.log(error);
@@ -153,7 +152,6 @@ export default class CodewordInput extends Component {
     };
 
     updateStep = (value, index) => {
-        console.log(value);
         let temp = {
             steps: this.state.steps
         };
@@ -194,6 +192,7 @@ export default class CodewordInput extends Component {
                         validation={validation}
                         textCallback={this.updateText}
                         generateCallback={this.consumeEndpoint}
+                        disableChange={this.state.loading}
                     />
 
                 </div>
@@ -324,6 +323,7 @@ class DataInput extends Component {
         validation: PropTypes.string,
         textCallback: PropTypes.func,
         generateCallback: PropTypes.func,
+        disableChange: PropTypes.bool,
     };
     onKeyUp = (event) => {
         if (event.key === 'Enter') {
@@ -357,15 +357,17 @@ class DataInput extends Component {
                         value={this.props.text}
                         onChange={this.props.textCallback}
                         fullWidth={true}
-                        disabled={false}
+                        disabled={this.props.disableChange}
                         errorText={this.props.validation}
+                        underlineStyle={{borderColor: lime200}}
                     />
                 </CardText>
                 <CardActions expandable={true}>
-                    <FlatButton label={"Generate"}
+                    <FlatButton label={this.props.disableChange ? "Generate (Loading)" : 'Generate'}
                                 onClick={this.props.generateCallback}
-                                disabled={this.props.validation === '' || this.props.text === ''}
-                                primary={true}/>
+                                disabled={this.props.validation !== '' || this.props.text === '' || this.props.disableChange}
+                                primary
+                    />
                 </CardActions>
             </Card>
         )

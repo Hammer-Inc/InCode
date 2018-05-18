@@ -3,6 +3,7 @@ import {Card, CardActions, CardHeader, CardText, FlatButton, TextField} from "ma
 import validateResponse, {matchers} from "../Logic/API";
 import {apiLocation, endpoint} from "../config"
 import PropTypes from 'prop-types';
+import {cyan500} from "material-ui/styles/colors";
 
 export default class CodewordOutput extends Component {
     static propTypes = {
@@ -22,8 +23,8 @@ export default class CodewordOutput extends Component {
             loading: false,
             mode: "validate",
             steps: {
-                0: true,
-                1: false,
+                0: localStorage.getItem("seenTutorial_CWout") !== '1',
+                1: localStorage.getItem("seenTutorial_CWout") === '1',
             }
         };
     }
@@ -67,7 +68,6 @@ export default class CodewordOutput extends Component {
     };
 
     updateStep = (value, index) => {
-        console.log(value);
         let temp = {
             steps: this.state.steps
         };
@@ -75,6 +75,9 @@ export default class CodewordOutput extends Component {
         this.setState(temp);
     };
 
+    onCompleteTutorial = () => {
+        localStorage.setItem("seenTutorial_CWout", '1')
+    };
 
     consumeEndpoint = () => {
 
@@ -117,7 +120,7 @@ export default class CodewordOutput extends Component {
                     style={{textAlign: 'left'}}
                 >
                     <ReceiveTutorial
-                        nextCallback={() => this.updateStep(true, 1)}
+                        nextCallback={() => {this.updateStep(true, 1); this.onCompleteTutorial()}}
                         openCallback={(v) => this.updateStep(v, 0)}
                         open={this.state.steps["0"]}
                     />
@@ -176,7 +179,6 @@ class ReceiveTutorial extends Component {
                             this.props.openCallback(false)
                         }}
                         primary
-                        disabled={this.props.validation === '' || this.props.text === ''}
                     />
                 </CardActions>
             </Card>
@@ -193,6 +195,7 @@ class Validator extends Component {
         validation: PropTypes.string,
         textCallback: PropTypes.func,
         generateCallback: PropTypes.func,
+        disableChange: PropTypes.bool,
     };
     onKeyUp = (event) => {
         if (event.key === 'Enter') {
@@ -228,15 +231,18 @@ class Validator extends Component {
                         value={this.props.text}
                         onChange={this.props.textCallback}
                         fullWidth={true}
-                        disabled={false}
+                        disabled={this.props.disableChange}
                         errorText={this.props.validation}
+                        underlineStyle={{borderColor: cyan500}}
                     />
                 </CardText>
                 <CardActions expandable={true}>
-                    <FlatButton label={"Validate"}
+                    <FlatButton label={this.props.disableChange ? "Validate (Loading)": "Validate"}
                                 onClick={this.props.generateCallback}
-                                disabled={false}
-                                primary={true}/>
+                                disabled={this.props.validation !== '' || this.props.text === '' || this.props.disableChange}
+                                primary
+
+                    />
                 </CardActions>
             </Card>
         )
