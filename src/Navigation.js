@@ -7,6 +7,7 @@ import CodewordInput from "./Components/CodewordInput";
 import PropTypes from "prop-types";
 import CodewordOutput from "./Components/CodewordOutput";
 import ModeStepper from "./Components/ModeStepper";
+import StatusViewer from "./Components/StatusViewer";
 
 class Navigation extends Component {
     static propTypes = {
@@ -77,8 +78,9 @@ class Navigation extends Component {
                 />
                 <Drawer
                     open={this.state.open}
-                    width={this.state.width < 415? this.state.width - 15 : 400}
+                    width={this.state.width < 415 ? this.state.width - 15 : 400}
                 >
+
                     <AppBar
                         title="Settings"
                         titleStyle={{cursor: 'pointer'}}
@@ -92,6 +94,8 @@ class Navigation extends Component {
                             input_mode={this.state.mode}
                             on_mode_change={this.handleModeUpdate}
                         />
+                        <StatusViewer/>
+
                         {
                             this.state.mode === "send" ? (
                                 <Paper
