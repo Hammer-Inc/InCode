@@ -21,4 +21,4 @@ Notes
 ----------
 The react component of this application only serves as the front-end/user interface to the code. Due to RMIT's assignment policy I am unable to release that code and thus is located in a private repository and results are served over API.
 
-#More information coming soon
+***More information coming soon***
