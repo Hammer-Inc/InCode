@@ -1,7 +1,7 @@
 {
   "name": "inCode",
   "version": "0.1.0",
-  "homepage": "https://www.avrami.me/incode/",
+  "homepage": "https://www.incode.avrami.me/",
   "private": true,
   "dependencies": {
     "material-ui": "^0.19.4",
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && copy build\\index.html build\\200.html",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
