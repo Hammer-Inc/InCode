@@ -74,12 +74,6 @@ export default class Sheet extends Component {
                 backgroundColor: Sheet.colours.header.background,
                 borderColor: Sheet.colours.header.border,
                 color: 'black',
-                display: 'inline-block',
-                borderRightStyle: 'inset',
-                borderBottomStyle: 'inset',
-                borderRightWidth: '2px',
-                borderBottomWidth: '2px',
-                zIndex: '999'
             },
             ...this.props.headerStyle
         };
@@ -104,10 +98,7 @@ export default class Sheet extends Component {
         };
         let indexStyle = {
             ...{
-                display: 'inline-block',
                 color: Sheet.colours.sheet.value,
-                fontSize: '22px',
-                zIndex: '999'
             },
             ...this.props.indexStyle
         };
@@ -157,7 +148,7 @@ export default class Sheet extends Component {
                 }
             >
                 <Paper
-                    style={cardStyle}>
+                    classname="frame" style={cardStyle}>
 
                     <div
                         onMouseEnter={this.onMouseEnter}
@@ -167,17 +158,17 @@ export default class Sheet extends Component {
                         {this.props.value}
                     </div>
                     <div style={headerBar}>
-                        <h5 style={headerStyle}>
+                        <h5 className="frame-cornerstone" style={headerStyle}>
                             {this.props.header}
                         </h5>
                         {this.props.highlight !== undefined ?
                             (
-                                <h6 style={statusStyle}>
+                                <h6 className="frame-status" style={statusStyle}>
                                     {this.props.highlight.type}
                                 </h6>
                             ) : null
                         }
-                        <h6 style={indexStyle}>
+                        <h6 className="frame-index" style={indexStyle}>
                             {1 + this.props.index}
                         </h6>
                     </div>
