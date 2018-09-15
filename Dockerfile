@@ -1,17 +1,17 @@
-# base image
-FROM node:9.6.1
-
-# set working directory
+FROM node:9.6.1 as builder
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
-
-# add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
-
-# install and cache app dependencies
 COPY package.json /usr/src/app/package.json
-RUN npm install --silent
-RUN npm install react-scripts@1.1.1 -g --silent
+RUN npm install 
+RUN npm install react-scripts@1.1.1 -g 
+COPY . /usr/src/app
+RUN npm run build
 
-# start app
-CMD ["npm", "start"]
+# production environment
+FROM nginx:1.13.9-alpine
+COPY --from=builder /usr/src/app/build /usr/share/nginx/html
+RUN rm -rf /etc/nginx/conf.d
+COPY conf /etc/nginx
+EXPOSE 7000
+CMD ["nginx", "-g", "daemon off;"]
