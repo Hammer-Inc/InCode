@@ -1,7 +1,7 @@
 {
   "name": "inCode",
   "version": "0.1.0",
-  "homepage": "https://www.incode.avrami.me/",
+  "homepage": "https://incode.avrami.me/",
   "private": true,
   "dependencies": {
     "material-ui": "^0.19.4",
