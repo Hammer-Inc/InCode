@@ -55,15 +55,15 @@ export default class CodewordInput extends Component {
 
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.inputState["type"] in prevState) {
-            let temp = {
+        if (!nextProps.inputState["type"] in prevState) {
+            return {
                 mode: nextProps.inputState["type"],
                 loading: false,
             };
-            temp[nextProps.inputState.type] = {};
-            temp[nextProps.inputState.type].text = nextProps.information.data;
-            temp[nextProps.inputState.type].validation_state = '';
-            return temp;
+            // temp[nextProps.inputState.type] = {};
+            // temp[nextProps.inputState.type].text = nextProps.information.data;
+            // temp[nextProps.inputState.type].validation_state = '';
+            // return temp;
         }
         return {
             loading: false
