@@ -94,6 +94,7 @@ export default class CodewordInput extends Component {
 
 
     modeUpdate = (event) => {
+        console.log(`Mode Update: ${event.target.value}`);
         this.setState({
             mode: event.target.value,
         })
@@ -107,7 +108,8 @@ export default class CodewordInput extends Component {
                     text: event.target.value,
                     validation_state: this.getValidation(event.target.value)
                 }
-            })
+            });
+            console.log(`Binary ${event.target.value}`)
         }
         if (this.state.mode === 'string') {
             this.setState({
@@ -115,7 +117,8 @@ export default class CodewordInput extends Component {
                     text: event.target.value,
                     validation_state: this.getValidation(event.target.value)
                 }
-            })
+            });
+            console.log(`String ${event.target.value}`)
         }
     };
 
